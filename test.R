@@ -16,3 +16,8 @@ selectedModel <-
 
 selectedModelObject <- allModels[[selectedModel]]
 selectedModelDiagnostics(selectedModel, allModelEvaluated)
+predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
+predicted_df
+
+
+selectedModelCharter(selectedModel,allModelEvaluated)

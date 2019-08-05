@@ -1,0 +1,167 @@
+---
+title: "Introduction"
+author: "Ashley"
+date: "8/5/2019"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Attaching libraries
+
+```{r inputs, message=FALSE, warning=FALSE, include=FALSE}
+library(ST.auto.1)
+library(dplyr)
+library(data.table)
+library(plotly)
+
+```
+## Input Data
+
+Two files need to be input - macrodata and macrometa. Descriptions as below
+
+### Macrodata description
+
+Do note that the data contains forecast values also
+```{r}
+#glimpse(macrodata)
+glimpse(tail(macrodata)) # shows last 6 rows. Note the NAs in the DR column
+```
+
+
+### Macrometa description
+
+Macrometa contains the variable names and the direction. The column names should mandatorily be Variable and Type. If other column names are used, the code would fail
+```{r macrometa, echo=TRUE}
+glimpse(macrometa)
+```
+
+## Creating Validation datasets
+Run the validation sampler to split the data into training, test and forecast data.Row numbers to be provided and code would subset by index. FOr instance, in the below sample, rows 1 to 29 would be the training data set, 30 to 33, for out of time valdiation, and the entire data for forecasting. Please note that the MAPE is run on test and training data, and the prediction is run on the forecast data,once model is chosen. 
+once validation sampler is run, it should produce three datasets in your global environment, test_df, train_df, forecast_df. it is not mandatory to create these via validation sampler. but if these data frames are not in the global enviroment, the other functions like modelDeveloper require that alterate test and trainig data be provided.
+
+```{r include=FALSE}
+validationSampler(macrodata,1:29,30:33,1:48)
+
+```
+
+## Variable Selection
+
+it is assumed variable selection has happened outside of the package via say lasso regression or stepwise.  lets assume the list below shows the variables of interest. These are only the independent variables
+```{r}
+vars <-
+  c(
+    "ECI_yoy_ch_3QMA_lag_4",
+    "avg_oil_pri_barrel_3QMA",
+    "Rl_est_Dub_q_yoy_ch_lag_1",
+    "avg_oil_pri_barrel_3QMA_lag_2",
+    "Non_oil_ECI_yoy_ch_3QMA_lag_3",
+    "Non_oil_ECI_yoy_ch_6QMA",
+    "avg_oil_pri_barrel",
+    "avg_oil_pri_barrel_3QMA_lag_1",
+    "avg_oil_pri_barrel_6QMA_lag_1",
+    "avg_oil_pri_barrel_lag_2",
+    "avg_oil_pri_barrel_lag_3"
+  )
+```
+
+## Models Development
+
+Run model developer code. LHS_vars is the response variable. It generates all possible combinations of models. Provide no_of_vars to indicate number of variables that you see in the model. In CBUAE stress testing, typically we dont see more than 4 variables in a single model. This is merely to keep the number of models to a reasonable count. There is no constraint however.
+
+```{r include=FALSE}
+allModels <-
+  modelDeveloper(
+    LHS_vars = "DR",
+    RHS_vars = vars,
+    trainData = train_df,
+    no_of_vars = 2
+  )
+```
+
+## Models Diagnistics
+
+Run modelDiagnostics to include all diagnostic tests. This computes the various statistics but doesnt classify it as pass or fail. In our modelling workflow, one can either take this into excel and then do further analysis or use MOdelEvaluator to classify each model as Pass or Fail
+
+The biggest advantage is that each model and its stats are in a single row.
+```{r message=FALSE, warning=FALSE}
+allModelsDiagnostics <- modelDiagnostics(allModels)
+```
+## Models Evaluation
+
+Run modelEvaluator to check for various thresholds. It classifies various models into pass or fail.
+```{r message=FALSE, warning=FALSE}
+allModelEvaluated<-modelEvaluator(allModelsDiagnostics)
+glimpse(allModelEvaluated)
+```
+ 
+ 
+
+one can see how many models have passed
+
+```{r}
+table(allModelEvaluated$FinalResults)
+```
+
+
+## Individual models analysis
+
+One can select which models have passed
+
+```{r}
+allModelEvaluated[FinalResults=="PASS",model]
+```
+TO analyse individual models copy the model name 
+```{r}
+selectedModel <-
+  "DR ~ ECI_yoy_ch_3QMA_lag_4+avg_oil_pri_barrel_3QMA_lag_1" 
+selectedModelObject <- allModels[[selectedModel]] # selectedmodel is a string whereas selectedmodelobject is the actual model object
+
+```
+
+See results of individual models. This is not made pretty, code yet to be brought in for this
+```{r}
+summary(selectedModelObject)
+```
+See diagnostics test in a pretty format
+
+```{r message=FALSE, warning=FALSE}
+selectedModelDiagnostics(selectedModel, allModelEvaluated)
+```
+
+## Forecasting
+
+Forecast values
+```{r}
+predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
+glimpse(predicted_df)
+
+```
+
+## Charting
+
+See chart of predicted values
+```{r message=FALSE, warning=FALSE}
+selectedModelCharter(selectedModel,allModelEvaluated)
+
+```
+For a more interactive chart use plotly
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+p<-selectedModelCharter(selectedModel,allModelEvaluated)
+ggplotly(p)
+
+```
+
+## Export selected model to Excel.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+selectedMOdelDf <- allModelsDiagnostics[model==selectedModel] 
+write.csv(selectedMOdelDf,"selectedMOdelDf.csv") # saves this to current working directory
+```
+
