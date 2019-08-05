@@ -1,0 +1,32 @@
+Package: ST.auto.1
+Title: Automates OLS Regression 
+Version: 0.0.0.9000
+Authors@R: person("Ashley", "Cherian", email = "ashley.cherian@gmail.com", role = c("aut", "cre"))
+Description: Automates the OLS Regression. The code generates all combinations 
+    of linear regression models. It runs diagnostic tests like tests for
+    Autocorrelation, sign  of coefficients (to check for intuitiveness),
+    Stationarity tests amongst others. The Main output is a consolidates 
+    Results table which is made available in the global environment. This table
+    contains the results of all the tests. The user may continue to explore in 
+    detail individual models by selecting the model of his choice. Relevant 
+    charts are also automatedly produced. It also produces a summary report of 
+    the model of his choice. This package however does not assist in variable 
+    selection. While glmulti already provides best subset of models, using 
+    R-squared and AIC amongst others,it currently it doesnt allow for rank 
+    filtering models on the basis of stationarity tests for instance. 
+    Also, this package doesnt have any additional dependencies like Rjava
+Depends: R (>= 3.5.1),data.table
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    ggplot2,
+    purrr,
+    lmtest,
+    car,
+    tseries,
+    formattable,
+    lubridate
+
+
