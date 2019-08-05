@@ -85,7 +85,7 @@ vars <-
 
 Run model developer code. LHS_vars is the response variable. It generates all possible combinations of models. Provide no_of_vars to indicate number of variables that you see in the model. In CBUAE stress testing, typically we dont see more than 4 variables in a single model. This is merely to keep the number of models to a reasonable count. There is no constraint however.
 
-```{r include=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 allModels <-
   modelDeveloper(
     LHS_vars = "DR",
