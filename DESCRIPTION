@@ -15,7 +15,7 @@ Description: Automates the OLS Regression. The code generates all combinations
     R-squared and AIC amongst others,it currently it doesnt allow for rank 
     filtering models on the basis of stationarity tests for instance. 
     Also, this package doesnt have any additional dependencies like Rjava
-Depends: R (>= 3.5.1),data.table,ggplot2,
+Depends: R (>= 3.0),data.table,ggplot2,
     purrr,
     lmtest,
     car,

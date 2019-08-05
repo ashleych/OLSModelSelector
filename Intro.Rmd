@@ -13,9 +13,19 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Set up libraries
+
+### Installing ST.auto.1 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(devtools)
+#install_github("ashleych/OLSModelSelector") - uncomment and install this package
+```
+
+
 ## Attaching libraries
 
-```{r inputs, message=FALSE, warning=FALSE, include=FALSE}
+```{r inputs, echo=TRUE, message=FALSE, warning=FALSE}
 library(ST.auto.1)
 library(dplyr)
 library(data.table)
