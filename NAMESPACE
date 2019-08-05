@@ -3,4 +3,5 @@
 export(modelDeveloper)
 export(modelDiagnostics)
 export(modelEvaluator)
+export(selectedModelDiagnostics)
 export(validationSampler)
