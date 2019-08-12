@@ -1,0 +1,71 @@
+---
+title: "Individual_model_results"
+author: "Ashley"
+date: "8/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+TO analyse individual models copy the model name 
+```{r}
+model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_lag_2"))
+modelDeveloper(model_1$LHS,model_1$RHS,no_of_vars = 2,multiple = FALSE) -> model_obj
+
+selectedModelObj <- model_obj[[1]]
+
+selectedModel<- names(model_obj)
+names(model_obj)
+selectedModel
+        
+```
+
+See results of individual models. This is not made pretty, code yet to be brought in for this
+```{r}
+summary(model_obj[[1]])
+```
+See diagnostics test in a pretty format
+
+```{r message=FALSE, warning=FALSE}
+allModelsDiagnostics<-modelDiagnostics(model_obj)
+vars<-model_1$RHS
+allModelEvaluated<- modelEvaluator(allModelsDiagnostics)
+debugonce(selectedModelDiagnostics)
+selectedModelDiagnostics(selectedModel, allModelEvaluated)
+```
+
+## Forecasting
+
+Forecast values
+```{r}
+predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
+glimpse(predicted_df)
+
+```
+
+## Charting
+
+See chart of predicted values
+```{r message=FALSE, warning=FALSE}
+selectedModelCharter(selectedModel,allModelEvaluated)
+
+```
+For a more interactive chart use plotly
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+p<-selectedModelCharter(selectedModel,allModelEvaluated)
+ggplotly(p)
+
+```
+
+## Export selected model to Excel.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+selectedMOdelDf <- allModelsDiagnostics[model==selectedModel] 
+write.csv(selectedMOdelDf,"selectedMOdelDf.csv") # saves this to current working directory
+```
+
+

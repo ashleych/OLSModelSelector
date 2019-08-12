@@ -24,7 +24,8 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 #' @param LHS_vars LHS of the regression function of the form Y ~ X1 + X2. This is the vector of response variable. Example default rates, or PIT PDs for default rate forecasting
 #' @param RHS_vars Right hand side of the regression equationof the form Y ~ X1 + X2. A vector of dependent variables,  macroeconomic variable names for instance. These should be available in the data provided to  validationSampler.
 #' @param no_of_vars Maximum Number of dependent variables to be used in the model building.
-#' @param trainData Maximum Number of dependent variables to be used in the model building.
+#' @param trainData Training dataframe on which model is to be built
+#' @param multiple Boolean to denote if a single model to be built using combinations of dependent variables or all combinations of dependent variables to be used. Default is \code{multiple = TRUE}
 #' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator $
 #' @export
 #' @examples
@@ -33,11 +34,12 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 #'results$`DR ~ avg_oil_pri_barrel_lag_2+avg_oil_pri_barrel_lag_3` # to view the coefficients alone. This is similar to using lm function
 #'summary('results$`DR ~ avg_oil_pri_barrel_lag_2+avg_oil_pri_barrel_lag_3` # to view the results) # to view detailed results along with pvalues etc. Simular to summary(lm)
 
-modelDeveloper <- function(LHS_vars, RHS_vars,no_of_vars,trainData=train_df){
+modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData=train_df){
 
   LHS_all <- paste0(LHS_vars," ~ ")
 
-  RHS_all<-  unlist(sapply(1:no_of_vars, function(x) {
+  if (multiple== TRUE){len= 1} else {len=no_of_vars} # if multiple models are not needed, and we want to see a model with just the LHS and RHS
+  RHS_all<-  unlist(sapply(len:no_of_vars, function(x) {
     unlist(combn(RHS_vars,x,simplify = FALSE, FUN=paste0,collapse="+"))
   }))
 

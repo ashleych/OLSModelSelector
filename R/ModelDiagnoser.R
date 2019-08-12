@@ -7,6 +7,7 @@
 #' @export
 #' @examples
 #' modelDiagnostics(allModelObjects) # allModelObjects created by modelDeveloper()
+
 modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=macrometa) {
   direction_check <- function(model_results,direction_config) {
     z <- as.data.table(coef(model_results), keep.rownames = TRUE)
@@ -169,5 +170,9 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
   })
   )
+
+  # Split into LHS and RHS
+
+  results_round
   return(results_round)
 }

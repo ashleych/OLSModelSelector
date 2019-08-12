@@ -4,16 +4,19 @@
 \alias{modelDeveloper}
 \title{Generates all models using combination of dependent and independent variables provided}
 \usage{
-modelDeveloper(LHS_vars, RHS_vars, no_of_vars, trainData = train_df)
+modelDeveloper(LHS_vars, RHS_vars, multiple = TRUE, no_of_vars,
+  trainData = train_df)
 }
 \arguments{
 \item{LHS_vars}{LHS of the regression function of the form Y ~ X1 + X2. This is the vector of response variable. Example default rates, or PIT PDs for default rate forecasting}
 
 \item{RHS_vars}{Right hand side of the regression equationof the form Y ~ X1 + X2. A vector of dependent variables,  macroeconomic variable names for instance. These should be available in the data provided to  validationSampler.}
 
+\item{multiple}{Boolean to denote if a single model to be built using combinations of dependent variables or all combinations of dependent variables to be used. Default is \code{multiple = TRUE}}
+
 \item{no_of_vars}{Maximum Number of dependent variables to be used in the model building.}
 
-\item{trainData}{Maximum Number of dependent variables to be used in the model building.}
+\item{trainData}{Training dataframe on which model is to be built}
 }
 \value{
 All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator $
