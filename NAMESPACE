@@ -3,6 +3,7 @@
 export(modelDeveloper)
 export(modelDiagnostics)
 export(modelEvaluator)
+export(reporter)
 export(selectedModelCharter)
 export(selectedModelDiagnostics)
 export(selectedModelForecaster)

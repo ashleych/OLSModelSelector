@@ -14,28 +14,8 @@ allModelEvaluated[FinalResults=="PASS",]
 
 validationSampler(macrodata,1:29,30:33,1:48)
 model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_lag_2"))
-modelDeveloper(model_1$LHS,model_1$RHS,no_of_vars = 2,multiple = FALSE) -> allModels
 
-debugonce(modelDiagnostics)
-allModelsDiagnostics<-modelDiagnostics(allModels)
-vars = model_1$RHS
-
-allModelEvaluated<- modelEvaluator(allModelsDiagnostics)
-debugonce(modelEvaluator)
-
-selectedModel <-
-  allModelEvaluated$model # have chosen a model that passes all tests
-
-selectedModelObject <- allModels[[selectedModel]]
-selectedModelDiagnostics(selectedModel, allModelEvaluated)
-predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
-predicted_df
+debugonce(reporter)
 
 
-selectedModelCharter(selectedModel,allModelEvaluated)
 
-selectedMOdelDf<-allModelsDiagnostics[model==selectedModel]
-debugonce(selectedModelDiagnostics)
-selectedModelDiagnostics(selectedModel, allModelEvaluated)
-
-selectedModelCharter(selectedModel,allModelEvaluated)

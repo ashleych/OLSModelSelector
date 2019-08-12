@@ -50,6 +50,9 @@ modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1
 
   allModelsDiagnostics$adf_results <- allModelsDiagnostics$Stationarity
   #check if statistically significant pvalue<0.05
+  vars <-
+    trimws(unique(unlist(allModelsDiagnostics[, tstrsplit(model, "[~]")][, V1 :=
+                                                                           NULL][, strsplit(V2, "[+]")])))
   temp<-allModelsDiagnostics[,lapply(.SD,function(x){
     ifelse(x<pvalue_threshold,0,1)
   }),.SDcols= paste0("p.",vars)]

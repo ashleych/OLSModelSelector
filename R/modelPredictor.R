@@ -24,13 +24,14 @@ selectedModelForecaster <- function(selectedModel,allModelEvaluated){
 #' @examples
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
-selectedModelCharter <- function(selectedModel,allModelEvaluated){
+selectedModelCharter <- function(selectedModel, allModelEvaluated) {
+  predicted_df <- selectedModelForecaster(selectedModel, allModelEvaluated)
+  ODR <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
 
-predicted_df<- selectedModelForecaster(selectedModel,allModelEvaluated)
-ODR <- trimws(unlist(strsplit(selectedModel,'[~]'))[[1]])
   ggplot(predicted_df, aes(lubridate::dmy(Date))) +
-    geom_line(aes(y = predicted_values, colour = "predicted"))+
-    geom_line(aes(y = get(ODR), colour = "DR")) +xlab("Date")+ ylab("Default Rates")
+    geom_line(aes(y = predicted_values, colour = "predicted")) +
+    geom_line(aes(y = get(ODR), colour = "DR")) + xlab("Date") + ylab("Default Rates") +
+    ggtitle(paste0("Model results for ", selectedModel)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
 }
 
   # predicted.melt<-data.table::melt(predicted_df,c("Date"),setdiff(used_vars,"DR"))
