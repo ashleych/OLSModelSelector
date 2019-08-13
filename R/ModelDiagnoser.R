@@ -51,6 +51,23 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     t(coef(summary(x))[, "Pr(>|t|)"])))
 
 
+  VIFValues <- map_df(allModelObjects,function(x) {
+    coefficients <- names(x$coefficients)[!names(x$coefficients)== "(Intercept)" ]
+
+    if (length(coefficients) < 2){
+     #data.frame(paste0("VIF.",coefficients) = NA)
+      vifs <- c(NA)
+      names(vifs) <- paste0("VIF.",coefficients)
+      as.data.frame(t(vifs))
+    }
+    else
+    {
+      vifs <- car::vif(x)
+      names(vifs) <- paste0("VIF.",names(vifs))
+       as.data.frame(t(vifs))
+    }
+  })
+
   names(dfStdErrors) <- paste("se", names(dfStdErrors), sep=".")
   names(dftValues) <- paste("t", names(dftValues), sep=".")
   names(dfpValues) <- paste("p", names(dfpValues), sep=".")
@@ -146,6 +163,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
                          dfStdErrors,
                          dftValues,
                          dfpValues,
+                         VIFValues,
                          R2 = R2,
                          adjR2 = adjR2,
                          MAPE_test,

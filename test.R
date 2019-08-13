@@ -13,7 +13,9 @@ allModelEvaluated[FinalResults=="PASS",]
 
 
 validationSampler(macrodata,1:29,30:33,1:48)
-model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_lag_2"))
+model_1<- "DR ~ avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2"
+
+reporter(model_1)
 
 debugonce(reporter)
 

@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-#value.to.match <- '{{value.to.match}}'
+
 model_i <- '{{i}}'
 index <- '{{counter}}'
 
@@ -15,25 +15,30 @@ index <- '{{counter}}'
   } else {
    modelType <- paste0("Challenger Model ",as.numeric(index)-1)
   }
-                
-#cat(model_i)
+
 ```
 ## `r modelType`
 
 ### Summary Regression Results 
 
 Summary Results  for ``r model_i``
-
+<br><br>
 ```{r echo=FALSE}
 
 
-t<- reporter(model_i)
+t <- reporter(model_i)
 
-t$report_summary
+t$report_summary$estimates_kable
 
 ```
 
+```{r}
+t$report_summary$otherStats_kable
+```
+
+
 ### Diagnostic Tests 
+
 Tests for stationarity  for ``r model_i``
 
 ```{r message=FALSE, warning=FALSE}
@@ -43,13 +48,26 @@ t$report_selectedModelDiagnostics
 ### Forecast 
 
 Observed versus Predicted Values for ``r model_i``
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+<br><br><br><br>
+
+
+```{r echo=FALSE,fig.align='center', fig.width = 5, fig.asp = 0.8,message=FALSE, warning=FALSE}
 t$report_pred_plot
 
 ```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
-```
+<br><br>
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
+kable(t(t$report_predicted_df)) %>% 
+kable_styling(font_size = 10) %>%
+  scroll_box(width = "100%", height = "200px") 
+
+```
+<br><br><br><br>
+<br><br><br><br>
+
+***
 

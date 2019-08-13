@@ -41,16 +41,23 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
   #return(chosenModelResults_pretty)
 
   #apply formatting through formattable
+  chosenModelResults_pretty %>%
+    mutate(
+      FINAL = ifelse(FINAL=="PASS",
+                              cell_spec(FINAL, "html", color = "green", bold = T),cell_spec(FINAL, "html", color = "red", bold = T)
+      )) %>%
+    kable(escape = F) %>%
+    kable_styling(bootstrap_options = "striped", full_width = F, font_size = 10)
 
-  formattable(chosenModelResults_pretty, list(
-    FINAL = formattable:: formatter("span",
-                                    style = x ~ formattable::style(color = ifelse(
-                                      x == "FAIL", c_red1, c_green
-                                    )),
-                                    x ~ icontext(ifelse(
-                                      x == "FAIL", "remove", "ok"
-                                    )))
-  ))
+  # formattable(chosenModelResults_pretty, list(
+  #   FINAL = formattable:: formatter("span",
+  #                                   style = x ~ formattable::style(color = ifelse(
+  #                                     x == "FAIL", c_red1, c_green
+  #                                   )),
+  #                                   x ~ icontext(ifelse(
+  #                                     x == "FAIL", "remove", "ok"
+  #                                   )))
+  # ))
 
 }
 

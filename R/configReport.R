@@ -22,10 +22,11 @@ reporter <- function(model, multiple= FALSE) {
   #debugonce(modelEvaluator)
 
   selectedModel <-
-    allModelEvaluated$model # have chosen a model that passes all tests
+    allModelEvaluated$model
 
   selectedModelObject <- allModels[[selectedModel]]
-  report_summary <- jtools::summ(selectedModelObject)
+  report_summary <- selectedModelRegressionResults(selectedModel,allModelEvaluated,direction_config=macrometa,pvalue_threshold =0.05)
+
   report_selectedModelDiagnostics <- selectedModelDiagnostics(selectedModel, allModelEvaluated)
   report_predicted_df <-
     selectedModelForecaster(selectedModel,selectedModelObject, allModelEvaluated)

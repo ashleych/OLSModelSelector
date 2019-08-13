@@ -1,6 +1,5 @@
 ---
-title: "Individual_model_results1"
-author: "Ashley"
+title: "Models Analyser"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -8,11 +7,36 @@ output:
     toc_depth: 3
     toc_float:
       collapsed: true
-    fig_width: 7
-    fig_height: 6
+    number_sections: FALSE
+    fig_width: 6
+    fig_height: 5
     fig_caption: true
     keep_md: false
+    includes:
+      after_body: footer.html
 ---
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"aptivaa.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+<style>
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    background-color: orange;
+}
+h1 {
+  font-size: 34px;
+  color: orange;
+}
+h2, h3 {
+  color: orange;
+}
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 84px;
+}
+</style>
 
 ```{r setup, include=FALSE}
 ## Load library
@@ -30,15 +54,11 @@ opts_chunk$set(
 )
 ```
 
-
-
-TO analyse individual models copy the model name 
-```{r}
-model_list<- c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2")
-
-        
+```{r include=FALSE}
+model_list<- c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2","DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1")
+#model_list<- "DR ~ ECI_yoy_ch_3QMA_lag_4+avg_oil_pri_barrel_3QMA+avg_oil_pri_barrel_3QMA_lag_2"
+#model_list<- "DR ~ ECI_yoy_ch_3QMA_lag_4"
 ```
-
 
 
 ```{r test-child, echo=FALSE}
