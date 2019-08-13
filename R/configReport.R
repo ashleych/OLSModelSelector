@@ -25,10 +25,10 @@ reporter <- function(model, multiple= FALSE) {
   report_summary <- summary(selectedModelObject)
   report_selectedModelDiagnostics <- selectedModelDiagnostics(selectedModel, allModelEvaluated)
   report_predicted_df <-
-    selectedModelForecaster(selectedModel, allModelEvaluated)
+    selectedModelForecaster(selectedModel,selectedModelObject, allModelEvaluated)
 
   report_pred_plot <-
-    selectedModelCharter(selectedModel, allModelEvaluated)
+    selectedModelCharter(selectedModel, selectedModelObject,allModelEvaluated)
   report_details <- list(report_summary,report_selectedModelDiagnostics,report_predicted_df,report_pred_plot)
 
   names(report_details) = c("report_summary", "report_selectedModelDiagnostics", "report_predicted_df", "report_pred_plot")

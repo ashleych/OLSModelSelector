@@ -17,5 +17,8 @@ model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_la
 
 debugonce(reporter)
 
+url_id <- "https://cran.r-project.org/src/contrib/Archive/rmarkdown/rmarkdown_1.11.tar.gz"
+url_id
+install.packages(url_id, repos=NULL, type="source")
 
 

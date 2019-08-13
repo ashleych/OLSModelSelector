@@ -1,12 +1,27 @@
 ---
-title: "Individual_model_results"
+title: "Individual_model_results1"
 author: "Ashley"
 date: "8/11/2019"
-output: html_document
+output:
+  html_document:
+  toc: true
+  toc_float: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Load library
+library(data.table)
+library(ST.auto.1)
+library(rmarkdown)
+library(knitr)
+library(DT)
+## Set knitr options
+opts_chunk$set(
+	fig.width = 10,
+	fig.height = 6,
+	echo = FALSE,
+	warning = FALSE
+)
 ```
 
 ## R Markdown
@@ -14,58 +29,30 @@ knitr::opts_chunk$set(echo = TRUE)
 TO analyse individual models copy the model name 
 ```{r}
 model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_lag_2"))
-modelDeveloper(model_1$LHS,model_1$RHS,no_of_vars = 2,multiple = FALSE) -> model_obj
-
-selectedModelObj <- model_obj[[1]]
-
-selectedModel<- names(model_obj)
-names(model_obj)
-selectedModel
+t<-reporter(model_1)
         
 ```
 
 See results of individual models. This is not made pretty, code yet to be brought in for this
-```{r}
-summary(model_obj[[1]])
+```{r echo=FALSE}
+t$report_summary
 ```
 See diagnostics test in a pretty format
 
 ```{r message=FALSE, warning=FALSE}
-allModelsDiagnostics<-modelDiagnostics(model_obj)
-vars<-model_1$RHS
-allModelEvaluated<- modelEvaluator(allModelsDiagnostics)
-debugonce(selectedModelDiagnostics)
-selectedModelDiagnostics(selectedModel, allModelEvaluated)
-```
-
-## Forecasting
-
-Forecast values
-```{r}
-predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
-glimpse(predicted_df)
-
+t$report_selectedModelDiagnostics
 ```
 
 ## Charting
 
-See chart of predicted values
-```{r message=FALSE, warning=FALSE}
-selectedModelCharter(selectedModel,allModelEvaluated)
 
-```
-For a more interactive chart use plotly
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-p<-selectedModelCharter(selectedModel,allModelEvaluated)
-ggplotly(p)
+t$report_pred_plot
 
 ```
 
-## Export selected model to Excel.
-
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-selectedMOdelDf <- allModelsDiagnostics[model==selectedModel] 
-write.csv(selectedMOdelDf,"selectedMOdelDf.csv") # saves this to current working directory
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
 ```
 
 

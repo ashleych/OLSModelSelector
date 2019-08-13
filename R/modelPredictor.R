@@ -7,7 +7,7 @@
 #' @examples
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
-selectedModelForecaster <- function(selectedModel,allModelEvaluated){
+selectedModelForecaster <- function(selectedModel,selectedModelObject,allModelEvaluated){
   predicted_values <- predict(selectedModelObject,newdata = forecast_df)
   used_vars <- trimws(unlist(strsplit(selectedModel,"[+,~]")))
   keep_vars<- c("Date",used_vars,"predicted_values")
@@ -24,8 +24,8 @@ selectedModelForecaster <- function(selectedModel,allModelEvaluated){
 #' @examples
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
-selectedModelCharter <- function(selectedModel, allModelEvaluated) {
-  predicted_df <- selectedModelForecaster(selectedModel, allModelEvaluated)
+selectedModelCharter <- function(selectedModel, selectedModelObject,allModelEvaluated) {
+  predicted_df <- selectedModelForecaster(selectedModel, selectedModelObject,allModelEvaluated)
   ODR <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
 
   ggplot(predicted_df, aes(lubridate::dmy(Date))) +
