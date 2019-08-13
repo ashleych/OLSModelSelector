@@ -1,11 +1,17 @@
 ---
 title: "Individual_model_results1"
 author: "Ashley"
-date: "8/11/2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
-  toc: true
-  toc_float: true
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+    keep_md: false
 ---
 
 ```{r setup, include=FALSE}
@@ -24,35 +30,27 @@ opts_chunk$set(
 )
 ```
 
-## R Markdown
+
 
 TO analyse individual models copy the model name 
 ```{r}
-model_1<- list(LHS="DR", RHS=c("avg_oil_pri_barrel_lag_3","avg_oil_pri_barrel_lag_2"))
-t<-reporter(model_1)
+model_list<- c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2")
+
         
 ```
 
-See results of individual models. This is not made pretty, code yet to be brought in for this
-```{r echo=FALSE}
-t$report_summary
-```
-See diagnostics test in a pretty format
-
-```{r message=FALSE, warning=FALSE}
-t$report_selectedModelDiagnostics
-```
-
-## Charting
 
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-t$report_pred_plot
+```{r test-child, echo=FALSE}
+out = NULL
+counter <- 0
+for (i in model_list) {
+  counter <- counter + 1 ;
+  out = c(out, knit_expand('ReportDetails.Rmd'))
+}
 
 ```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
-```
+`r paste(knit(text = out), collapse = '\n')`
 
 

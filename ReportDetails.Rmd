@@ -1,0 +1,55 @@
+---
+title: "ReportDetails"
+author: "Ashley"
+date: "8/13/2019"
+output: html_document
+---
+
+```{r}
+#value.to.match <- '{{value.to.match}}'
+model_i <- '{{i}}'
+index <- '{{counter}}'
+
+  if (as.numeric(index) == 1) {
+   modelType <- "Champion Model"
+  } else {
+   modelType <- paste0("Challenger Model ",as.numeric(index)-1)
+  }
+                
+#cat(model_i)
+```
+## `r modelType`
+
+### Summary Regression Results 
+
+Summary Results  for ``r model_i``
+
+```{r echo=FALSE}
+
+
+t<- reporter(model_i)
+
+t$report_summary
+
+```
+
+### Diagnostic Tests 
+Tests for stationarity  for ``r model_i``
+
+```{r message=FALSE, warning=FALSE}
+t$report_selectedModelDiagnostics
+```
+
+### Forecast 
+
+Observed versus Predicted Values for ``r model_i``
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+t$report_pred_plot
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
+```
+
+

@@ -9,7 +9,10 @@
 
 reporter <- function(model, multiple= FALSE) {
 
-  allModels <- modelDeveloper(model$LHS,model$RHS,no_of_vars = length(model$RHS),multiple = multiple)
+  model_LHS <- trimws(unlist(strsplit(model, "[~]"))[[1]])
+  RHS_combined <- trimws(unlist(strsplit(model, "[~]"))[[2]])
+  model_RHS <- trimws(unlist(strsplit(RHS_combined, '[+]')))
+  allModels <- modelDeveloper(model_LHS,model_RHS,no_of_vars = length(model_RHS),multiple = multiple)
 
   #debugonce(modelDiagnostics)
   allModelsDiagnostics<-modelDiagnostics(allModels)
@@ -22,7 +25,7 @@ reporter <- function(model, multiple= FALSE) {
     allModelEvaluated$model # have chosen a model that passes all tests
 
   selectedModelObject <- allModels[[selectedModel]]
-  report_summary <- summary(selectedModelObject)
+  report_summary <- jtools::summ(selectedModelObject)
   report_selectedModelDiagnostics <- selectedModelDiagnostics(selectedModel, allModelEvaluated)
   report_predicted_df <-
     selectedModelForecaster(selectedModel,selectedModelObject, allModelEvaluated)

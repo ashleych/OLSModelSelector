@@ -30,7 +30,7 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
   Criteria <- data.table(Check=c("Heteroskedasticity", "Auto-Correlation", "Normality", "Unit Root", "Multicollinearity"),
                          Test=c("Breusch-Pagan Test", "Durbin Watson Test", "Shapiro-Wilk Test", "ADF Test", "VIF"),
                          stub=c( "BP", "dw", "shapiro", "adf", NA),
-                         Criteria=c( "> 0.1", "> 0.1", "> 0.1", "< 0.1", "<4"), # this is just for information, the values arent being used anywhere. NO threshold check is being done using this table
+                         Criteria=c( "p > 0.1", "p > 0.1", "p > 0.1", "p < 0.1", "<4"), # this is just for information, the values arent being used anywhere. NO threshold check is being done using this table
                          Pass=c("Homoskedasticity", "No Auto-Correlation", "Residuals Normally distributed", "Stationary", "No Multicollinearity")
   )
 
