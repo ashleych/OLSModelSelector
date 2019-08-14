@@ -149,8 +149,10 @@ selectedModelDiagnostics(selectedModel, allModelEvaluated)
 
 Forecast values
 ```{r}
-predicted_df<-selectedModelForecaster(selectedModel,allModelEvaluated)
-glimpse(predicted_df)
+
+
+selectedModelForecaster(selectedModel,
+                                               selectedModelObject, allModelEvaluated)
 
 ```
 
@@ -158,12 +160,12 @@ glimpse(predicted_df)
 
 See chart of predicted values
 ```{r message=FALSE, warning=FALSE}
-selectedModelCharter(selectedModel,allModelEvaluated)
-
+ p<- selectedModelCharter(selectedModel, selectedModelObject,
+                                         allModelEvaluated)
+p
 ```
 For a more interactive chart use plotly
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-p<-selectedModelCharter(selectedModel,allModelEvaluated)
 ggplotly(p)
 
 ```
@@ -173,5 +175,18 @@ ggplotly(p)
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 selectedMOdelDf <- allModelsDiagnostics[model==selectedModel] 
 write.csv(selectedMOdelDf,"selectedMOdelDf.csv") # saves this to current working directory
+```
+
+## Automatic report generation
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+models <-
+  c(
+    "DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2",
+    "DR~avg_oil_pri_barrel_lag_2",
+    "DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1"
+  )
+call_rmd(models,report_title = "Portfolio A")
+
 ```
 
