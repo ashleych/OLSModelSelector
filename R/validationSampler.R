@@ -26,13 +26,8 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 #' @param no_of_vars Maximum Number of dependent variables to be used in the model building.
 #' @param trainData Training dataframe on which model is to be built
 #' @param multiple Boolean to denote if a single model to be built using combinations of dependent variables or all combinations of dependent variables to be used. Default is \code{multiple = TRUE}
-#' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator $
+#' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator
 #' @export
-#' @examples
-#' vars<-c("ECI_yoy_ch_3QMA_lag_4", "avg_oil_pri_barrel_3QMA", "Rl_est_Dub_q_yoy_ch_lag_1", "avg_oil_pri_barrel_3QMA_lag_2", "Non_oil_ECI_yoy_ch_3QMA_lag_3", "Non_oil_ECI_yoy_ch_6QMA", "avg_oil_pri_barrel", "avg_oil_pri_barrel_3QMA_lag_1", "avg_oil_pri_barrel_6QMA_lag_1", "avg_oil_pri_barrel_lag_2", "avg_oil_pri_barrel_lag_3")
-#' results<-modelDeveloper("DR",vars,2)
-#'results$`DR ~ avg_oil_pri_barrel_lag_2+avg_oil_pri_barrel_lag_3` # to view the coefficients alone. This is similar to using lm function
-#'summary('results$`DR ~ avg_oil_pri_barrel_lag_2+avg_oil_pri_barrel_lag_3` # to view the results) # to view detailed results along with pvalues etc. Simular to summary(lm)
 
 modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData=train_df){
 
@@ -52,7 +47,6 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
 
   return(allModelObjects)
 }
-#allModels <-modelDeveloper("DR",vars,4)
 
 
 

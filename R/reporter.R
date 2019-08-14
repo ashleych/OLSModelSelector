@@ -4,7 +4,6 @@
 #' @param output_file name of the output file
 #' @param output_dir Name of the output directory
 #' @param report_title Name of the report
-#' @return
 #' @export
 #' @examples
 #' models<-c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2","DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1")

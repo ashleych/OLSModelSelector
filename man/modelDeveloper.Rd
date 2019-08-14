@@ -19,7 +19,7 @@ modelDeveloper(LHS_vars, RHS_vars, multiple = TRUE, no_of_vars,
 \item{trainData}{Training dataframe on which model is to be built}
 }
 \value{
-All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator $
+All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator
 }
 \description{
 Generates all models using combination of dependent and independent variables provided
