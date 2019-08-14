@@ -7,6 +7,7 @@
 #' @export
 #' @examples
 #' models<-c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2","DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1")
+#' validationSampler(macrodata,1:29,30:33,1:48)
 #' call_rmd(models,report_title = "Retail")
 
 call_rmd <- function(model_list, output_file = "report.html", output_dir = getwd(), report_title = "Corporate", ...) {
