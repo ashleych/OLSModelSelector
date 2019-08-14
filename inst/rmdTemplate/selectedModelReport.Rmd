@@ -1,5 +1,5 @@
 ---
-title: "Models Analyser"
+title: "`r params$set_title`"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -14,13 +14,12 @@ output:
     keep_md: false
     includes:
       after_body: footer.html
+params:
+  model_list: "DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2"
+  set_title: "report_title"
 ---
-<script>
-   $(document).ready(function() {
-     $head = $('#header');
-     $head.prepend('<img src=\"aptivaa.png\" style=\"float: right;width: 150px;\"/>')
-   });
-</script>
+
+<img src="aptivaa.png" style="position:absolute;top:20px;right:20px;" height="75" width="200" />
 
 <style>
 .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
@@ -54,17 +53,11 @@ opts_chunk$set(
 )
 ```
 
-```{r include=FALSE}
-model_list<- c("DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2","DR~avg_oil_pri_barrel_lag_2","DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1")
-#model_list<- "DR ~ ECI_yoy_ch_3QMA_lag_4+avg_oil_pri_barrel_3QMA+avg_oil_pri_barrel_3QMA_lag_2"
-#model_list<- "DR ~ ECI_yoy_ch_3QMA_lag_4"
-```
-
 
 ```{r test-child, echo=FALSE}
 out = NULL
 counter <- 0
-for (i in model_list) {
+for (i in params$model_list) {
   counter <- counter + 1 ;
   out = c(out, knit_expand('ReportDetails.Rmd'))
 }

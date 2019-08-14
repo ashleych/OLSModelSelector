@@ -1,6 +1,6 @@
 Package: ST.auto.1
 Title: Automates OLS Regression 
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: person("Ashley", "Cherian", email = "ashley.cherian@gmail.com", role = c("aut", "cre"))
 Description: Automates the OLS Regression. The code generates all combinations 
     of linear regression models. It runs diagnostic tests like tests for
@@ -23,7 +23,9 @@ Depends: R (>= 3.0),data.table,ggplot2,
     formattable,
     lubridate,
     jtools,
-    kableExtra
+    kableExtra,
+    knitr,
+    dplyr
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
