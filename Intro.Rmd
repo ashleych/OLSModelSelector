@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
 author: "Ashley"
-date: "8/5/2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: true
@@ -179,14 +179,15 @@ write.csv(selectedMOdelDf,"selectedMOdelDf.csv") # saves this to current working
 
 ## Automatic report generation
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 models <-
   c(
     "DR~avg_oil_pri_barrel_lag_3+avg_oil_pri_barrel_lag_2",
     "DR~avg_oil_pri_barrel_lag_2",
     "DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1"
   )
-call_rmd(models,report_title = "Portfolio A")
+#call_rmd(models,report_title = "Portfolio A")
+#Uncomment and run above code to obtain html report
 
 ```
 
