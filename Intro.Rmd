@@ -56,7 +56,7 @@ glimpse(macrometa)
 Run the validation sampler to split the data into training, test and forecast data.Row numbers to be provided and code would subset by index. FOr instance, in the below sample, rows 1 to 29 would be the training data set, 30 to 33, for out of time valdiation, and the entire data for forecasting. Please note that the MAPE is run on test and training data, and the prediction is run on the forecast data,once model is chosen. 
 once validation sampler is run, it should produce three datasets in your global environment, test_df, train_df, forecast_df. it is not mandatory to create these via validation sampler. but if these data frames are not in the global enviroment, the other functions like modelDeveloper require that alterate test and trainig data be provided.
 
-```{r include=FALSE}
+```{r echo=TRUE}
 validationSampler(macrodata,1:29,30:33,1:48)
 
 ```

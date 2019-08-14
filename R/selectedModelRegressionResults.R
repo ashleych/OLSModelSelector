@@ -11,12 +11,12 @@
 
 selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direction_config=macrometa,pvalue_threshold =0.05){
 
-  c_red1 <- "#f15b27"
-  c_red2 <- "#eb4955"
-  c_green1 <- "#bad532"
-  c_green2 <- "#84c444"
-  c_green3 <- "#00a054"
-  c_green <- "#01b5aa"
+  # c_red1 <- "#f15b27"
+  # c_red2 <- "#eb4955"
+  # c_green1 <- "#bad532"
+  # c_green2 <- "#84c444"
+  # c_green3 <- "#00a054"
+  # c_green <- "#01b5aa"
 
   selectedModel <-allModelEvaluated$model
   chosenModelResults <- allModelEvaluated[model==selectedModel,]
@@ -78,40 +78,6 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
     kable_styling(bootstrap_options = "striped", full_width = F, font_size = 10)
 
   list(estimates_kable=estimates_kable,otherStats_kable=otherStats_kable)
-  #   mutate_all(~cell_spec(
-  #     .x,
-  #     color = ifelse(.x < 0, "white", "white"),
-  #     background = ifelse(.x < 0, "red"," black"))) %>%
-  #   kable(escape = F) %>%
-  #   kable_styling()
-  #
-  # disp = ifelse(disp > 200,
-  #               cell_spec(disp, "html", color = "red", bold = T),
-  #               cell_spec(disp, "html", color = "green", italic = T)),
 
-  # formattable(chosenModelResults.melt, list(
-  #   DirectionCheck = formattable:: formatter("span",
-  #                                   style = x ~ formattable::style(color = ifelse(
-  #                                     x == "FAIL", c_red1, c_green
-  #                                   )),
-  #                                   x ~ icontext(ifelse(
-  #                                     x == "FAIL", "remove", "ok"
-  #                                   ))),
-  #   Significance = formattable:: formatter("span",
-  #                                            style = x ~ formattable::style(color = ifelse(
-  #                                              x == "FAIL", c_red1, c_green
-  #                                            )),
-  #                                            x ~ icontext(ifelse(
-  #                                              x == "FAIL", "remove", "ok"
-  #                                            ))),
-  #   Multicollinearity = formattable:: formatter("span",
-  #                                          style = x ~ formattable::style(color = ifelse(
-  #                                            x == "FAIL", c_red1, c_green
-  #                                          )),
-  #                                          x ~ icontext(ifelse(
-  #                                            x == "FAIL", "remove", "ok"
-  #                                          )))
-  # )) %>%  kable("html", escape = F) %>%
-  #   kable_styling(bootstrap_options = "striped", font_size = 7)
 
 }
