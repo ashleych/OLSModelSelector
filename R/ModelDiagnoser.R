@@ -65,7 +65,9 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
       vifs <- car::vif(x)
       names(vifs) <- paste0("VIF.",names(vifs))
       as.data.frame(t(vifs))
-      }, error )
+      }, error = function(e){
+        return(data.frame(VIF_error=9999))
+      })
     }
   }
   )
@@ -91,16 +93,19 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
 
   MAPE_test <- sapply(allModelObjects, function(x) {
+    Response_var <- as.character((x$terms)[[2]])
     df <-
-      data.frame(DR = test_df$DR,
+      data.frame(DR = test_df[[Response_var]],
                  pred = predict(x, newdata = test_df)) # test data being used
 
     mean(abs((df$DR - df$pred) / df$DR) )
   })
 
   MAPE_training <- sapply(allModelObjects, function(x) {
+    Response_var <- as.character((x$terms)[[2]])
+
     df <-
-      data.frame(DR = train_df$DR,
+      data.frame(DR = train_df[[Response_var]],
                  pred = predict(x)) # training data being used
 
     mean(abs((df$DR - df$pred) / df$DR) )
