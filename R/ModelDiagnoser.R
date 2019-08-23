@@ -50,7 +50,6 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   dfpValues   <- map_df(allModelObjects, function(x) as.data.frame(
     t(coef(summary(x))[, "Pr(>|t|)"])))
 
-
   VIFValues <- map_df(allModelObjects,function(x) {
     coefficients <- names(x$coefficients)[!names(x$coefficients)== "(Intercept)" ]
 
@@ -62,11 +61,14 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     }
     else
     {
+      tryCatch({
       vifs <- car::vif(x)
       names(vifs) <- paste0("VIF.",names(vifs))
-       as.data.frame(t(vifs))
+      as.data.frame(t(vifs))
+      }, error )
     }
-  })
+  }
+  )
 
   names(dfStdErrors) <- paste("se", names(dfStdErrors), sep=".")
   names(dftValues) <- paste("t", names(dftValues), sep=".")
