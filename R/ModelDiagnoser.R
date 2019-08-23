@@ -93,6 +93,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
 
   MAPE_test <- sapply(allModelObjects, function(x) {
+    x <- update(x,na.action=na.exclude)
     Response_var <- as.character((x$terms)[[2]])
     df <-
       data.frame(DR = test_df[[Response_var]],
@@ -102,6 +103,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   })
 
   MAPE_training <- sapply(allModelObjects, function(x) {
+    x <- update(x,na.action=na.exclude)
     Response_var <- as.character((x$terms)[[2]])
 
     df <-
