@@ -91,26 +91,39 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     summary(x)$sigma)
   fstats   <- sapply(allModelObjects, calcPval)
 
+  MAPE_fun<-function(y_pred, y_true)
+  {
+    MAPE <- mean(abs((y_true - y_pred)/y_true))
+    return(MAPE)
+  }
 
   MAPE_test <- sapply(allModelObjects, function(x) {
-    x <- update(x,na.action=na.exclude)
-    Response_var <- as.character((x$terms)[[2]])
-    df <-
-      data.frame(DR = test_df[[Response_var]],
-                 pred = predict(x, newdata = test_df)) # test data being used
 
-    mean(abs((df$DR - df$pred) / df$DR) )
+    Response_var <- as.character((x$terms)[[2]])
+    y_true <- na.omit(test_df[[Response_var]])
+    y_pred <- predict(x, newdata = test_df)
+    # df <-
+    #   data.frame(DR = test_df[[Response_var]],
+    #              pred = predict(x, newdata = test_df)) # test data being used
+    #
+    # mean(abs((df$DR - df$pred) / df$DR) )
+    MAPE_fun(y_pred,y_true)
+
   })
 
   MAPE_training <- sapply(allModelObjects, function(x) {
-    x <- update(x,na.action=na.exclude)
     Response_var <- as.character((x$terms)[[2]])
+#
+#     df <-
+#       data.frame(DR = train_df[[Response_var]],
+#                  pred = predict(x)) # training data being used
+#
+#     mean(abs((df$DR - df$pred) / df$DR) )
+    y_true <- na.omit(test_df[[Response_var]])
+    y_pred <- predict(x)  # training data being used
 
-    df <-
-      data.frame(DR = train_df[[Response_var]],
-                 pred = predict(x)) # training data being used
+    MAPE_fun(y_pred,y_true)
 
-    mean(abs((df$DR - df$pred) / df$DR) )
   })
   #### BP tests
   bp_test_allModels <-
