@@ -18,8 +18,10 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     z$sign <- sign(z$coef)
     z$lookedup <- lookup[z$Variable]
     z<-z[z$Variable != "(Intercept)",]
+    z<- z[!is.na(lookedup),]
+    if(nrow(z)==0){direction_check <- 1} else {
     direction_check <- sum(z$sign==z$lookedup,na.rm=TRUE)/nrow(z)
-
+    }
     # direction_config<-as.data.table(direction_config)
     # signdf <- direction_config[z, on = c(Variable = "vars")]
     # signdf[Variable != "(Intercept)" , c("sign", "N") := list(ifelse(sign(coef) ==
@@ -174,8 +176,15 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   adf_pvalue <-
     sapply(ADF_allModels, function(x) x$p.value)
 
+  ## KPSS tests
 
-
+  KPSS_allModels <-
+    lapply(allModelObjects, function(x)
+      kpss.test(x$residuals))
+  KPSS_statistic <-
+    sapply(KPSS_allModels,function(x) x$statistic)
+  KPSS_pvalue <-
+    sapply(KPSS_allModels, function(x) x$p.value)
 
 
   results <- data.table( model = as.character(names(allModelObjects)),
@@ -200,6 +209,8 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
                          shapiro_pvalue  ,
                          adf_statistic ,
                          adf_pvalue ,
+                         KPSS_statistic,
+                         KPSS_pvalue,
                          dfdirectioncheck
   )
 

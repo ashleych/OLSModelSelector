@@ -48,6 +48,11 @@ modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1
            "Non-Stationary",
            "Stationary")
 
+  allModelsDiagnostics$KPSS_TrendStationarity <-
+    ifelse(allModelsDiagnostics$KPSS_pvalue < Stationarity_threshold,
+           "Non-Stationary",
+           "Stationary")
+
   allModelsDiagnostics$adf_results <- allModelsDiagnostics$Stationarity
   #check if statistically significant pvalue<0.05
   vars <-

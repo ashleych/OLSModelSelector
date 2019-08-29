@@ -5,12 +5,8 @@ library(ST.auto.1)
 wd <- getwd()
 setwd("D:\\Dropbox\\Projects\\RAK\\RAK")
 macrometa <- readxl::read_excel("macrometa1.xlsx")
-#macrodata <- readxl::read_excel("Macro_data_2.xlsx")
-macrodata <- read.csv("Macro_data_2.csv",stringsAsFactors =FALSE)
-str(macro)
+macrodata <- readxl::read_excel("Macro_data_2.xlsx")
 setwd(wd)
-
-head(as.character(macrodata$Date))
 
 validationSampler(macrodata,22:52,53:56,22:56)
 
@@ -21,9 +17,9 @@ trial1_RHS <- c(vars,"DR_logit_FD_lag1")
 allModels <-
   modelDeveloper(
     LHS_vars = c("DR_logit_FD"),
-    RHS_vars = vars,
+    RHS_vars = trial1_RHS,
     trainData = train_df,
-    no_of_vars = 2
+    no_of_vars = 3
   )
 beepr::beep()
 #allModels[[1]]
@@ -53,14 +49,3 @@ combn(c("A","B","C"),2)
 length(combn(vars, 2, simplify = FALSE, FUN = paste0,
       collapse = "+"))
 modelDeveloper
-#
-models <-c("DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy", "DR_logit_FD ~ avg_oil_pri_barr+rl_est_ad_yoy_fd", "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_fd", "DR_logit_FD ~ uae_rl_gov_cons_fd+avg_oil_pri_barr_3qma", "DR_logit_FD ~ rl_est_ad_log+uae_rl_cons_3qma", "DR_logit_FD ~ DR_logit_FD_lag1", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_qoq", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_ann_imp_qoq+uae_rl_cons_fd", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_fd")
-
-models <-"DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy"
-models <- "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_yoy"
-validationSampler()
-debugonce(reporter)
-reporter(models)
-call_rmd(models,report_title = "Portfolio A")
-
-
