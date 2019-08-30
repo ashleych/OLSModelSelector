@@ -9,6 +9,7 @@ macrometa <- readxl::read_excel("macrometa1.xlsx")
 macrodata <- read.csv("Macro_data_2.csv",stringsAsFactors =FALSE)
 #str(macro)
 setwd(wd)
+glimpse(macrodata)
 
 validationSampler(macrodata,22:52,53:56,22:56)
 
@@ -27,6 +28,7 @@ allModels <-
 #allModels[[1]]
 allModelsDiagnostics <- modelDiagnostics(allModels)
 allModelEvaluated<-modelEvaluator(allModelsDiagnostics)
+args(modelEvaluator)
 table(allModelEvaluated$FinalResults)
 
 setDT(temp)
@@ -49,17 +51,27 @@ setDT(temp)
 #       collapse = "+"))
 # modelDeveloper
 # #
-models <-c("DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy", "DR_logit_FD ~ avg_oil_pri_barr+rl_est_ad_yoy_fd", "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_fd", "DR_logit_FD ~ uae_rl_gov_cons_fd+avg_oil_pri_barr_3qma", "DR_logit_FD ~ rl_est_ad_log+uae_rl_cons_3qma", "DR_logit_FD ~ DR_logit_FD_lag1", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_qoq", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_ann_imp_qoq+uae_rl_cons_fd", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_fd")
+# models <-c("DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy", "DR_logit_FD ~ avg_oil_pri_barr+rl_est_ad_yoy_fd", "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_fd", "DR_logit_FD ~ uae_rl_gov_cons_fd+avg_oil_pri_barr_3qma", "DR_logit_FD ~ rl_est_ad_log+uae_rl_cons_3qma", "DR_logit_FD ~ DR_logit_FD_lag1", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_qoq", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_fd", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_ann_imp_qoq+uae_rl_cons_fd", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_log_gr_qr", "DR_logit_FD ~ uae_rl_cons_fd+uae_ann_imp_fd")
+#
+# models <-"DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy"
+# models <- "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_yoy"
 
-models <-"DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy"
-models <- "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_yoy"
+models <-
+  c(
+    "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy",
+    "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_yoy",
+    "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_qoq"
+  )
 
-models<-c("DR_logit_FD ~ avg_oil_pri_barr+uae_rl_cons_yoy", "DR_logit_FD ~ avg_oil_pri_barr+uae_rl_gov_cons_yoy", "DR_logit_FD ~ uae_rl_cons_qoq+uae_ann_imp_qoq")
 
+models <-
+  c(
+    "DR_logit_FD ~ avg_oil_pri_barr",
+    "DR_logit_FD ~ rl_est_ad_yoy+uae_rl_cons",
+    "DR_logit_FD ~ eibor+eibor_yoy","DR_logit_FD ~ uae_rl_cons+rl_est_ad_yoy.1")
 
-validationSampler()
-debugonce(reporter)
-reporter(models)
 call_rmd(models,report_title = "Portfolio RAKFIN")
 
-
+cols <- trimws(unlist(strsplit(models,'[~+]')))
+cols
+cols %in% colnames(train_df)

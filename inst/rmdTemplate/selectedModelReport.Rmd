@@ -88,7 +88,7 @@ for (i in params$model_list) {
 ### Training Data Used
 ```{r}
 
-varList <- unique(trimws(unlist(tstrsplit(params$model_list,"[~,+]"))))
+varList <- unique(trimws(unlist(strsplit(params$model_list,"[~,+]"))))
 varList <- c('Date',varList)
 
 kable(train_df[,..varList]) %>% 
@@ -101,7 +101,7 @@ kable(train_df[,..varList]) %>%
 ### Test Data Used
 ```{r}
 
-varList <- unique(trimws(unlist(tstrsplit(params$model_list,"[~,+]"))))
+varList <- unique(trimws(unlist(strsplit(params$model_list,"[~,+]"))))
 varList_withDate <- c('Date',varList)
 
 kable(test_df[,..varList_withDate]) %>% 
