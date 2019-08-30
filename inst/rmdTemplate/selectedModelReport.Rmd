@@ -78,6 +78,30 @@ for (i in params$model_list) {
 
 ```
 
+
 `r paste(knit(text = out), collapse = '\n')`
 
+## Data and Assumptions
 
+### Training Data Used
+```{r}
+
+varList <- unique(trimws(unlist(tstrsplit(params$model_list,"[~,+]"))))
+varList <- c('Date',varList)
+
+kable(train_df[,..varList]) %>% 
+  kable_styling(font_size = 10) %>% 
+  kable_styling(full_width = F)
+```
+
+
+### Test Data Used
+```{r}
+
+varList <- unique(trimws(unlist(tstrsplit(params$model_list,"[~,+]"))))
+varList <- c('Date',varList)
+
+kable(test_df[,..varList]) %>% 
+  kable_styling(font_size = 10) %>% 
+  kable_styling(full_width = F)
+```
