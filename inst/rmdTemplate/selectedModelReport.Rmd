@@ -44,6 +44,8 @@ library(ST.auto.1)
 library(rmarkdown)
 library(knitr)
 library(DT)
+library(gridExtra)
+library(ggplot2)
 ## Set knitr options
 opts_chunk$set(
 	fig.width = 10,
@@ -91,7 +93,8 @@ varList <- c('Date',varList)
 
 kable(train_df[,..varList]) %>% 
   kable_styling(font_size = 10) %>% 
-  kable_styling(full_width = F)
+  kable_styling(full_width = F) %>% 
+  scroll_box(width = "100%")
 ```
 
 
@@ -99,9 +102,32 @@ kable(train_df[,..varList]) %>%
 ```{r}
 
 varList <- unique(trimws(unlist(tstrsplit(params$model_list,"[~,+]"))))
-varList <- c('Date',varList)
+varList_withDate <- c('Date',varList)
 
-kable(test_df[,..varList]) %>% 
+kable(test_df[,..varList_withDate]) %>% 
   kable_styling(font_size = 10) %>% 
-  kable_styling(full_width = F)
+  kable_styling(full_width = F) %>% 
+  scroll_box(width = "100%")
 ```
+
+
+### Variable plots
+
+```{r}
+for (i in 1:length(varList)) { 
+  if(i==1){plots <- list()}
+  # Quant_sum_join1<- Quant_sum_join[variable==uni[i],]
+  # Quant_sum_join1$title <- uni[i]
+  plotData <-forecast_df[,c("Date",varList[i]),with=FALSE]
+  plotData$title <- varList[i]
+  plots[[i]] <-   ggplot(plotData, aes(lubridate::dmy(Date))) +
+    geom_line(aes_string(y = varList[i]),size=1, color='orange')+ xlab("Date") + ylab(" ") +theme(axis.text.x = element_text(angle = 45,hjust = 1)) + facet_grid(. ~ title)
+  
+}
+
+
+do.call("grid.arrange", c(plots))
+
+
+```
+
