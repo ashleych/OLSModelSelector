@@ -21,24 +21,22 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
   chosenModelResults <-allModelEvaluated[model==selectedModel,]
 
   # select all stats and pvalues that is to be displayed.
-  stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf"),c("_pvalue","_statistic","_results")))
+  stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf","KPSS"),c("_pvalue","_statistic","_results")))
   chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = stats][, rn := .I]
 
   chosenModelResults.melt <-melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "_")][,dcast(.SD, stub ~ var)]
 
   #Creiteris for Display
-  Criteria <- data.table(Check=c("Heteroskedasticity", "Auto-Correlation", "Normality", "Unit Root", "Multicollinearity"),
-                         Test=c("Breusch-Pagan Test", "Durbin Watson Test", "Shapiro-Wilk Test", "ADF Test", "VIF"),
-                         stub=c( "BP", "dw", "shapiro", "adf", NA),
+  Criteria <- data.table(Check=c("Heteroskedasticity", "Auto-Correlation", "Normality", "Unit Root", "Multicollinearity","Stationarity-KPSS"),
+                         Test=c("Breusch-Pagan Test", "Durbin Watson Test", "Shapiro-Wilk Test", "ADF Test", "VIF","KPSS"),
+                         stub=c( "BP", "dw", "shapiro", "adf", NA,'KPSS'),
                          Criteria=c( "p > 0.1", "p > 0.1", "p > 0.1", "p < 0.1", "<4"), # this is just for information, the values arent being used anywhere. NO threshold check is being done using this table
-                         Pass=c("Homoskedasticity", "No Auto-Correlation", "Residuals Normally distributed", "Stationary", "No Multicollinearity")
+                         Pass=c("Homoskedasticity", "No Auto-Correlation", "Residuals Normally distributed", "Stationary", "No Multicollinearity","Stationary")
   )
-
   chosenModelResults_informative <- Criteria[chosenModelResults.melt,on="stub"]
   chosenModelResults_informative[, FINAL:=ifelse(Pass == results, "PASS", "FAIL")]
   chosenModelResults_pretty<-chosenModelResults_informative[,c('Check','Test','statistic','pvalue','Criteria','results','FINAL')]
 
-  #return(chosenModelResults_pretty)
 
   #apply formatting through formattable
   chosenModelResults_pretty %>%
@@ -49,15 +47,7 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
     kable(escape = F) %>%
     kable_styling(bootstrap_options = "striped", full_width = F, font_size = 10)
 
-  # formattable(chosenModelResults_pretty, list(
-  #   FINAL = formattable:: formatter("span",
-  #                                   style = x ~ formattable::style(color = ifelse(
-  #                                     x == "FAIL", c_red1, c_green
-  #                                   )),
-  #                                   x ~ icontext(ifelse(
-  #                                     x == "FAIL", "remove", "ok"
-  #                                   )))
-  # ))
+
 
 }
 

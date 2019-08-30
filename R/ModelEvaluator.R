@@ -48,7 +48,7 @@ modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1
            "Non-Stationary",
            "Stationary")
 
-  allModelsDiagnostics$KPSS_TrendStationarity <-
+  allModelsDiagnostics$KPSS_results <-
     ifelse(allModelsDiagnostics$KPSS_pvalue < Stationarity_threshold,
            "Non-Stationary",
            "Stationary")
