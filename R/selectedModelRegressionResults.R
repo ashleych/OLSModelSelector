@@ -33,7 +33,13 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
   keep_cols<- c(stats,vif_stats,paste0("Estimates.",used_vars_intercept))
   chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = keep_cols][, rn := .I]
 
-  chosenModelResults.melt <-  melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "[.]")][,dcast(.SD,  var ~ stub)]
+  chosenModelResults.melt <- melt(chosenModelResults.stats,
+                                  "rn")
+  # replace dot with  colon since sometimes the variables will have dots in it, which will cause trstrplit operation below to fail
+  chosenModelResults.melt$variable <- sub("[.]",":",chosenModelResults.melt$variable)
+
+  chosenModelResults.melt<- chosenModelResults.melt[, `:=`(c("stub", "var"), tstrsplit(variable, "[:]"))][,dcast(.SD, var ~ stub)]
+  # chosenModelResults.melt <-  melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "[.]")][,dcast(.SD,  var ~ stub)]
   #Creiteris for Display
 
 

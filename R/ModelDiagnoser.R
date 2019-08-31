@@ -66,6 +66,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
       tryCatch({
       vifs <- car::vif(x)
       names(vifs) <- paste0("VIF.",names(vifs))
+      vifs <- setNames(c(vifs, max(vifs)), c(names(vifs), "VifMax"))
       as.data.frame(t(vifs))
       }, error = function(e){
         return(data.frame(VIF_error=9999))

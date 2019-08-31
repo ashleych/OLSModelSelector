@@ -9,7 +9,7 @@ macrometa <- readxl::read_excel("macrometa1.xlsx")
 macrodata <- read.csv("Macro_data_2.csv",stringsAsFactors =FALSE)
 #str(macro)
 setwd(wd)
-str(macrodata)
+#(macrodata)
 #glimpse(macrodata)
 
 
@@ -31,7 +31,7 @@ allModels <-
     LHS_vars = c("DR_logit_FD"),
     RHS_vars = selectedVars,
     trainData = train_df,
-    no_of_vars = 4
+    no_of_vars = 3
   )
 
 selectedModelObjs <- modelFilter(allModels,adj.r.squaredThreshold =0.45)
