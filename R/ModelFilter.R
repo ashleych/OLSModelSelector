@@ -14,9 +14,10 @@ modelFilter <- function(allModels,adj.r.squaredThreshold =0.5){
     Filter(function(x)
       summary(x)$adj.r.squared > adj.r.squaredThreshold,
       allModels)
-
-  cat("Filter criteria - Adjusted RSquared ",adj.r.squaredThreshold )
-  cat("Filtered number of models :", length(names(selectedModelObjs)))
+  cat("\n")
+  cat("\n Filter criteria - Adjusted RSquared ",adj.r.squaredThreshold )
+  cat("\n")
+  cat("\n Selected number of models :", length(names(selectedModelObjs)))
 
   selectedModelObjs
   }

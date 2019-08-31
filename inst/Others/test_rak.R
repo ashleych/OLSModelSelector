@@ -9,7 +9,11 @@ macrometa <- readxl::read_excel("macrometa1.xlsx")
 macrodata <- read.csv("Macro_data_2.csv",stringsAsFactors =FALSE)
 #str(macro)
 setwd(wd)
+str(macrodata)
 #glimpse(macrodata)
+
+
+
 
 validationSampler(macrodata,22:52,53:56,22:56)
 
@@ -30,9 +34,8 @@ allModels <-
     no_of_vars = 4
   )
 
-cat('No of models generated is  ',length(names(allModels)))
 selectedModelObjs <- modelFilter(allModels,adj.r.squaredThreshold =0.45)
-cat('No of models after filtering for Rsquare is  ',length(names(selectedModelObjs)))
+
 
 #allModels[[1]]
 system.time({

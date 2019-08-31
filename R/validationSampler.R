@@ -31,6 +31,38 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 
 modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData=train_df){
 
+  # check if the data is available before running
+  df_names <- c("macrodata",'macrometa',"test_df","train_df","forecast_df")
+  if (!all(sapply(df_names, function(x) {
+    (exists(x) &&
+     is.data.frame(get(x)))
+  }))) {
+    stop(
+      'Please check if ALL of the following data frames exist : \n macrodata \n macrometa \n test_df \n train_df \n forecast_df. \n \n If not use ValidationSampler function'
+    )
+  }
+
+  stopifnot(
+    identical(sort(colnames(macrodata)), sort(colnames(train_df)))   ,
+    identical(sort(colnames(macrodata)), sort(colnames(test_df))),
+    identical(sort(colnames(macrodata)), sort(colnames(forecast_df))),
+    identical(sort(colnames(macrodata)), sort(colnames(test_df)))
+  )
+  if (!all(macrometa$Variable %in% colnames(macrodata))) {
+    stop("Variable listed in Macrometa data is not available in macrodata")
+  }
+
+  if (!all(colnames(macrometa) %in% c("Variable", "Type"))) {
+    stop("Macrometa should contain columns Variable and Type")
+  }
+
+  if (!all(unique(macrometa$Type) %in% c(1, -1))) {
+    stop(
+      "Type in macrometa should contain directions as -1 or 1. In case you dont want variables to be tested for sign, do not include it in the macrometa file"
+    )
+  }
+
+
   LHS_all <- paste0(LHS_vars," ~ ")
 
   if (multiple== TRUE){len= 1} else {len=no_of_vars} # if multiple models are not needed, and we want to see a model with just the LHS and RHS
