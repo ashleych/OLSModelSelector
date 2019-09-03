@@ -9,7 +9,7 @@
 #' selectedModel <- "DR ~ ECI_yoy_ch_3QMA_lag_4+avg_oil_pri_barrel_3QMA_lag_1"
 #' selectedModelDiagnostics(selectedModel,allModelEvaluated) # allModelEvaluated created by modelEvaluator()
 
-selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
+selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type='html'){
 
   c_red1 <- "#f15b27"
   c_red2 <- "#eb4955"
@@ -38,14 +38,27 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated){
   chosenModelResults_pretty<-chosenModelResults_informative[,c('Check','Test','statistic','pvalue','Criteria','results','FINAL')]
 
 
-  #apply formatting through formattable
-  chosenModelResults_pretty %>%
-    mutate(
-      FINAL = ifelse(FINAL=="PASS",
-                              cell_spec(FINAL, "html", color = "green", bold = T),cell_spec(FINAL, "html", color = "red", bold = T)
+  if (report_type=='html') {
+    return(
+    #apply formatting through formattable
+    chosenModelResults_pretty %>%
+      mutate(FINAL = ifelse(
+        FINAL == "PASS",
+        cell_spec(FINAL, "html", color = "green", bold = T),
+        cell_spec(FINAL, "html", color = "red", bold = T)
       )) %>%
-    kable(escape = F) %>%
-    kable_styling(bootstrap_options = "striped", full_width = F, font_size = 10)
+      kable(escape = F) %>%
+      kable_styling(
+        bootstrap_options = "striped",
+        full_width = F,
+        font_size = 10
+      ))
+
+  }
+
+  if (report_type == 'excel') {
+    return(chosenModelResults_pretty)
+  }
 
 
 

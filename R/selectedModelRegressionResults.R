@@ -9,7 +9,7 @@
 #' selectedModel <- "DR ~ ECI_yoy_ch_3QMA_lag_4+avg_oil_pri_barrel_3QMA_lag_1"
 #' selectedModelDiagnostics(selectedModel,allModelEvaluated) # allModelEvaluated created by modelEvaluator()
 
-selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direction_config=macrometa,pvalue_threshold =0.05){
+selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direction_config=macrometa,pvalue_threshold =0.05, report_type='html'){
 
   # c_red1 <- "#f15b27"
   # c_red2 <- "#eb4955"
@@ -49,7 +49,7 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
   chosenModelResults.melt$lookedup <- lookup[chosenModelResults.melt$var]
   chosenModelResults.melt[var != "(Intercept)",DirectionCheck:=ifelse(sign==lookedup,"PASS","FAIL")]
 
-  chosenModelResults.melt[,Significance := ifelse(p < pvalue_threshold,"PASS","FAIL")]
+  chosenModelResults.melt[var != "(Intercept)",Significance := ifelse(p < pvalue_threshold,"PASS","FAIL")]
   chosenModelResults.melt[,Multicollinearity := ifelse(VIF < 4,"PASS","FAIL")]
 
   chosenModelResults.melt[,sign:=NULL][,lookedup:=NULL]
@@ -82,8 +82,12 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
     ) %>%
     kable(escape = F) %>%
     kable_styling(bootstrap_options = "striped", full_width = F, font_size = 10)
-
-  list(estimates_kable=estimates_kable,otherStats_kable=otherStats_kable)
-
+  if (report_type=='html'){
+  return(list(estimates_kable=estimates_kable,otherStats_kable=otherStats_kable))
+  }
+  if (report_type=='excel'){
+    return(list(estimates_excel = chosenModelResults.melt, otherStats_excel =
+                  otherStats_df))
+  }
 
 }

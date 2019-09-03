@@ -22,5 +22,5 @@ Training, test and forecast datasets in global Environment
 Splits into training, test and forecast datasets
 }
 \examples{
-validationSampler(macroecodata,1:29,30:33,1:48)
+validationSampler(macrodata,1:29,30:33,1:48)
 }

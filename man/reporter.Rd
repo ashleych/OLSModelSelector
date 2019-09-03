@@ -4,7 +4,7 @@
 \alias{reporter}
 \title{Generates report details for each model defined by LHS and RHS}
 \usage{
-reporter(model, multiple = FALSE)
+reporter(model, report_type = "html", multiple = FALSE)
 }
 \arguments{
 \item{model}{Model defined by means of LHS and RHS(to be passed as a list)}

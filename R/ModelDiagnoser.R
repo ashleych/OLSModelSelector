@@ -217,7 +217,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
   results_round <- as.data.table(lapply(results, function(x) {
 
-    if (is.numeric(x)) round(x, 4) else (x)
+    if (is.numeric(x)) round(x, 6) else (x)
 
 
   })

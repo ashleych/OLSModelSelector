@@ -1,2 +1,5 @@
 ^ST\.auto\.1\.Rproj$
 ^\.Rproj\.user$
+^[.].*$
+^.*/[.].*$
+^.*[.]xlsx$

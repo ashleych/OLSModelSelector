@@ -5,7 +5,7 @@
 \title{Knit the rmarkdown into an HTML document}
 \usage{
 call_rmd(model_list, output_file = "report.html", output_dir = getwd(),
-  report_title = "Corporate", ...)
+  report_title = "Corporate", report_type = "html", ...)
 }
 \arguments{
 \item{output_file}{name of the output file}

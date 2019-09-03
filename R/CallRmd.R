@@ -10,7 +10,8 @@
 #' validationSampler(macrodata,1:29,30:33,1:48)
 #' call_rmd(models,report_title = "Retail")
 
-call_rmd <- function(model_list, output_file = "report.html", output_dir = getwd(), report_title = "Corporate", ...) {
+call_rmd <- function(model_list, output_file = "report.html", output_dir = getwd(), report_title = "Corporate", report_type='html',...) {
+
 
 
   ## Get directory of report markdown template

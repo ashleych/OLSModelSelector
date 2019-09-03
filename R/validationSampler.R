@@ -7,7 +7,7 @@
 #' @return Training, test and forecast datasets in global Environment
 #' @export
 #' @examples
-#' validationSampler(macroecodata,1:29,30:33,1:48)
+#' validationSampler(macrodata,1:29,30:33,1:48)
 
 validationSampler <- function(macroecodata,rn_train,rn_test,rn_forecast){
 setDT(macroecodata)
@@ -30,6 +30,12 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 #' @export
 
 modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData=train_df){
+  cat("Following checks are being done : \n")
+  cat("1. If the following data frames exist : macrodata,macrometa,test_df,train_df,forecast_df \n")
+  cat("2. Variable listed in Macrometa data is not available in macrodata \n")
+  cat("3. Macrometa should contain columns Variable and Type \n")
+  cat("4. Type in macrometa should contain directions as -1 or 1. \n In case variables are not to be tested for sign, do not include it in the macrometa file \n")
+  cat("5. Macrodata should contain Date as a character field and in dmy format eg. 31/12/2018 \n")
 
   # check if the data is available before running
   df_names <- c("macrodata",'macrometa',"test_df","train_df","forecast_df")
@@ -62,6 +68,15 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
     )
   }
 
+  if (!is.character(macrodata$Date)) {
+    stop("Macrodata should contain Date as a character field and in dmy format eg. 31/12/2018")
+  }
+  tryCatch(
+    lubridate::dmy(macrodata$Date),
+    error = function(e) {
+      cat("Date in macrodata should be in dmy format eg. 31/12/2018")
+    }
+  )
 
   LHS_all <- paste0(LHS_vars," ~ ")
 
