@@ -22,10 +22,25 @@ call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), rep
 
   names(model_list) <- make.unique(strtrim(model_list, 28))
 
-    lapply(seq_along(model_list), function(x) {
+  summary <-
+    data.frame(modelName = model_list, sheetName = names(model_list))
 
-      sheetCreator(model=model_list[[x]], file.name=file.name,sheetName= names(model_list[x]))
-    })
+  dfSummaryWriter(file.name,sheetName="Intro",dataFrame=summary)
+
+
+  lapply(seq_along(model_list), function(x) {
+    sheetCreator(
+      model = model_list[[x]],
+      file.name = file.name,
+      sheetName = names(model_list[x])
+    )
+  })
+
+    dfWriter(file.name,"macrodata",macrodata)
+    dfWriter(file.name,"macrometa",macrometa)
+    dfWriter(file.name,"trainingData",train_df)
+    dfWriter(file.name,"TestingData",test_df)
+    dfWriter(file.name,"Forecast",forecast_df)
 
   # output_dir <- getwd()
   output_file <- file.name
@@ -49,7 +64,7 @@ sheetCreator <- function(model,file.name, sheetName) {
   excelDetails <- reporter(model,report_type = "excel")
 
   #check if files already exists in the current directory in which case, it loads it else it creates a new file
-  if(! file.exists(file.name))
+  if(!file.exists(file.name))
     wb = createWorkbook()
   else
     wb <- loadWorkbook(file = file.name)
@@ -72,12 +87,24 @@ sheetCreator <- function(model,file.name, sheetName) {
   negStyle <- createStyle(fontColour = "firebrick3",fontName = "Arial", fontSize = 9)
   posStyle <- createStyle(fontColour = "darkgreen",fontName = "Arial", fontSize = 9)
 
-  fullSheetStyle <- createStyle(fontName = "Arial", fontSize = 9, fontColour = "black",
-                                numFmt = "GENERAL", border = NULL,
-                                borderColour = getOption("openxlsx.borderColour", "black"),
-                                borderStyle = getOption("openxlsx.borderStyle", "thin"), bgFill = NULL,
-                                fgFill = NULL, halign = NULL, valign = NULL, textDecoration = NULL,
-                                wrapText = FALSE, textRotation = NULL, indent = NULL)
+  fullSheetStyle <-
+    createStyle(
+      fontName = "Arial",
+      fontSize = 9,
+      fontColour = "black",
+      numFmt = "GENERAL",
+      border = NULL,
+      borderColour = getOption("openxlsx.borderColour", "black"),
+      borderStyle = getOption("openxlsx.borderStyle", "thin"),
+      bgFill = NULL,
+      fgFill = NULL,
+      halign = NULL,
+      valign = NULL,
+      textDecoration = NULL,
+      wrapText = FALSE,
+      textRotation = NULL,
+      indent = NULL
+    )
 
   headerStyle <- createStyle(fontSize = 10, fontColour ='black' , halign = "center",
                              fgFill = "darkorange", border="TopBottom", borderColour = "#4F81BD")
@@ -208,6 +235,154 @@ print(excelDetails$report_pred_plot)
 }
 
 
+#'Creates and formats sheets in Excel using openxslx. Called internally by call_excel function
+#'
+#' Called in a loop depending on number of models
+#' @param file.name Name of the excel file
+#' @param sheetName name of the sheet
+#' @param dataFrame Name of the dataframe to be written to the sheet
+#' @export
+#' @examples
+
+dfWriter <- function(file.name,sheetName,dataFrame) {
+  if(!file.exists(file.name))
+    wb = createWorkbook()
+  else
+    wb <- loadWorkbook(file = file.name)
+  #wb <- createWorkbook()
+
+  fullSheetStyle <-
+    createStyle(
+      fontName = "Arial",
+      fontSize = 9,
+      fontColour = "black",
+      numFmt = "GENERAL",
+      border = NULL,
+      borderColour = getOption("openxlsx.borderColour", "black"),
+      borderStyle = getOption("openxlsx.borderStyle", "thin"),
+      bgFill = NULL,
+      fgFill = NULL,
+      halign = NULL,
+      valign = NULL,
+      textDecoration = NULL,
+      wrapText = FALSE,
+      textRotation = NULL,
+      indent = NULL
+    )
+  headerStyle <-
+    createStyle(
+      fontSize = 10,
+      fontColour = 'black' ,
+      halign = "center",
+      fgFill = "darkorange",
+      border = "TopBottom",
+      borderColour = "#4F81BD"
+    )
+
+  addWorksheet(wb,sheetName)
+  showGridLines(wb, sheetName, showGridLines = FALSE)
+  addStyle(wb, sheetName, fullSheetStyle, rows = 1:400, cols=1:400,gridExpand = TRUE, stack = TRUE)
+
+  openxlsx::writeDataTable(
+    wb,
+    sheetName,
+    dataFrame,
+    startCol = 1,
+    tableStyle = "TableStyleLight1",
+    withFilter = FALSE,
+    startRow = 1,
+    headerStyle = headerStyle,
+    colNames = TRUE,
+    bandedRows = TRUE
+  )
+
+  openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
+}
+
+#'Creates summary sheet
+#'
+#' Called in a loop depending on number of models
+#' @param file.name Name of the excel file
+#' @param sheetName name of the sheet
+#' @param dataFrame Name of the dataframe to be written to the sheet
+#' @export
+#' @examples
+
+dfSummaryWriter <- function(file.name,sheetName="Navigation",dataFrame) {
+  if(!file.exists(file.name))
+    wb = createWorkbook()
+  else
+    wb <- loadWorkbook(file = file.name)
+  #wb <- createWorkbook()
+
+  fullSheetStyle <-
+    createStyle(
+      fontName = "Arial",
+      fontSize = 9,
+      fontColour = "black",
+      numFmt = "GENERAL",
+      border = NULL,
+      borderColour = getOption("openxlsx.borderColour", "black"),
+      borderStyle = getOption("openxlsx.borderStyle", "thin"),
+      bgFill = NULL,
+      fgFill = NULL,
+      halign = NULL,
+      valign = NULL,
+      textDecoration = NULL,
+      wrapText = FALSE,
+      textRotation = NULL,
+      indent = NULL
+    )
+  headerStyle <-
+    createStyle(
+      fontSize = 10,
+      fontColour = 'black' ,
+      halign = "center",
+      fgFill = "darkorange",
+      border = "TopBottom",
+      borderColour = "#4F81BD"
+    )
+
+  #addWorksheet(wb,sheetName)
+
+  sheetName <- "Navigation"
+  addWorksheet(wb, sheetName)
+  showGridLines(wb, sheetName, showGridLines = FALSE)
+  addStyle(wb, sheetName, fullSheetStyle, rows = 1:400, cols=1:400,gridExpand = TRUE, stack = TRUE)
+  startRow <- 10
+  startCol <- 10
+  # writeDataTable(wb, sheet = "Navigation", x = summary$modelName, startRow = startRow,startCol = startCol, colNames = True)
+
+  openxlsx::writeDataTable(
+    wb,
+    sheetName,
+    data.frame(Models=summary$modelName),
+    startCol = startCol,
+    tableStyle = "TableStyleLight1",
+    withFilter = FALSE,
+    startRow = startRow,
+    headerStyle = headerStyle,
+    colNames = TRUE,
+    bandedRows = TRUE
+  )
+  setColWidths(wb, sheetName, cols=startCol, widths = '60')
+
+  for (i in 1:nrow(summary)) {
+    writeFormula(
+      wb,
+      "Navigation",
+      startRow = startRow + i ,
+      startCol = startCol + 1,
+      x = makeHyperlinkString(
+        sheet = summary$sheetName[[i]],
+        row = 1,
+        col = 2,
+        text = "Click here"
+      )
+    )
+  }
+  openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
+}
 
 
 

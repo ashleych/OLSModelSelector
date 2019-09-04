@@ -2,6 +2,8 @@
 
 export(call_excel)
 export(call_rmd)
+export(dfSummaryWriter)
+export(dfWriter)
 export(modelDeveloper)
 export(modelDiagnostics)
 export(modelEvaluator)

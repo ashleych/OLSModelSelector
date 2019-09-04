@@ -17,6 +17,8 @@ modelDeveloper(LHS_vars, RHS_vars, multiple = TRUE, no_of_vars,
 \item{no_of_vars}{Maximum Number of dependent variables to be used in the model building.}
 
 \item{trainData}{Training dataframe on which model is to be built}
+
+\item{silent}{Default to FALSE. It is used to not run cat statements when call_rmd is called}
 }
 \value{
 All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator

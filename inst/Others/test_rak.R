@@ -70,6 +70,7 @@ call_rmd(models,report_title = "Portfolio RAKFIN")
 
 
 ## this will generate excel sheet
-call_excel(models[[1]])
-
-
+call_excel(models)
+reporter(models[[1]],report_type = 'excel') -> f
+f$modelName
+f$report_summary

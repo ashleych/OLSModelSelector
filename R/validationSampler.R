@@ -26,16 +26,24 @@ list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir 
 #' @param no_of_vars Maximum Number of dependent variables to be used in the model building.
 #' @param trainData Training dataframe on which model is to be built
 #' @param multiple Boolean to denote if a single model to be built using combinations of dependent variables or all combinations of dependent variables to be used. Default is \code{multiple = TRUE}
+#' @param silent Default to FALSE. It is used to not run cat statements when call_rmd is called
 #' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator
 #' @export
 
 modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData=train_df){
-  cat("Following checks are being done : \n")
-  cat("1. If the following data frames exist : macrodata,macrometa,test_df,train_df,forecast_df \n")
-  cat("2. Variable listed in Macrometa data is not available in macrodata \n")
-  cat("3. Macrometa should contain columns Variable and Type \n")
-  cat("4. Type in macrometa should contain directions as -1 or 1. \n In case variables are not to be tested for sign, do not include it in the macrometa file \n")
-  cat("5. Macrodata should contain Date as a character field and in dmy format eg. 31/12/2018 \n")
+
+  # if(silent==FALSE){
+  #   cat("Following checks are being done : \n")
+  #   cat(
+  #     "1. If the following data frames exist : macrodata,macrometa,test_df,train_df,forecast_df \n"
+  #   )
+  #   cat("2. Variable listed in Macrometa data is not available in macrodata \n")
+  #   cat("3. Macrometa should contain columns Variable and Type \n")
+  #   cat(
+  #     "4. Type in macrometa should contain directions as -1 or 1. \n In case variables are not to be tested for sign, do not include it in the macrometa file \n"
+  #   )
+  #   cat("5. Macrodata should contain Date as a character field and in dmy format eg. 31/12/2018 \n")
+  # }
 
   # check if the data is available before running
   df_names <- c("macrodata",'macrometa',"test_df","train_df","forecast_df")
