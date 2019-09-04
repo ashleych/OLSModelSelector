@@ -4,14 +4,14 @@
 \alias{dfSummaryWriter}
 \title{Creates summary sheet}
 \usage{
-dfSummaryWriter(file.name, sheetName = "Navigation", dataFrame)
+dfSummaryWriter(file.name, dataFrame)
 }
 \arguments{
 \item{file.name}{Name of the excel file}
 
-\item{sheetName}{name of the sheet}
-
 \item{dataFrame}{Name of the dataframe to be written to the sheet}
+
+\item{sheetName}{name of the sheet}
 }
 \description{
 Called in a loop depending on number of models

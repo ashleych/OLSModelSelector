@@ -23,9 +23,9 @@ call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), rep
   names(model_list) <- make.unique(strtrim(model_list, 28))
 
   summary <-
-    data.frame(modelName = model_list, sheetName = names(model_list))
+    data.table(modelName = model_list, sheetName = names(model_list))
 
-  dfSummaryWriter(file.name,sheetName="Intro",dataFrame=summary)
+  dfSummaryWriter(file.name,dataFrame=summary)
 
 
   lapply(seq_along(model_list), function(x) {
@@ -308,7 +308,7 @@ dfWriter <- function(file.name,sheetName,dataFrame) {
 #' @export
 #' @examples
 
-dfSummaryWriter <- function(file.name,sheetName="Navigation",dataFrame) {
+dfSummaryWriter <- function(file.name,dataFrame) {
   if(!file.exists(file.name))
     wb = createWorkbook()
   else
@@ -356,7 +356,7 @@ dfSummaryWriter <- function(file.name,sheetName="Navigation",dataFrame) {
   openxlsx::writeDataTable(
     wb,
     sheetName,
-    data.frame(Models=summary$modelName),
+    data.table(Models=dataFrame$modelName),
     startCol = startCol,
     tableStyle = "TableStyleLight1",
     withFilter = FALSE,
@@ -367,14 +367,14 @@ dfSummaryWriter <- function(file.name,sheetName="Navigation",dataFrame) {
   )
   setColWidths(wb, sheetName, cols=startCol, widths = '60')
 
-  for (i in 1:nrow(summary)) {
+  for (i in 1:nrow(dataFrame)) {
     writeFormula(
       wb,
       "Navigation",
       startRow = startRow + i ,
       startCol = startCol + 1,
       x = makeHyperlinkString(
-        sheet = summary$sheetName[[i]],
+        sheet = dataFrame$sheetName[[i]],
         row = 1,
         col = 2,
         text = "Click here"
