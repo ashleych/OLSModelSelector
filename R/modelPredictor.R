@@ -8,12 +8,15 @@
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
 selectedModelForecaster <- function(selectedModel,selectedModelObject,allModelEvaluated){
+  #allModelEvaluated is not needed, to remove from this function as well as charter
   predicted_values <- predict(selectedModelObject,newdata = forecast_df)
   used_vars <- trimws(unlist(strsplit(selectedModel,"[+,~]")))
   keep_vars<- c("Date",used_vars,"predicted_values")
   predicted_df <- data.table(cbind(forecast_df,predicted_values))[,..keep_vars]
   return(predicted_df)
 }
+
+
 
 #' Chart the model selected
 #'
@@ -24,17 +27,24 @@ selectedModelForecaster <- function(selectedModel,selectedModelObject,allModelEv
 #' @examples
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
-selectedModelCharter <- function(selectedModel, selectedModelObject,allModelEvaluated) {
-  predicted_df <- selectedModelForecaster(selectedModel, selectedModelObject,allModelEvaluated)
+selectedModelCharter <- function(selectedModel, selectedModelObject,allModelEvaluated,...) {
+  #input_list <- as.list(substitute(list(...)))
+  input_list <- list(...)
+  if ("predicted_df" %in% names(input_list) &&
+      "data.frame" %in% class(input_list$predicted_df) &&
+      nrow(input_list$predicted_df) > 0) {
+    predicted_df <- input_list$predicted_df
+  } else {
+    predicted_df <-
+      selectedModelForecaster(selectedModel, selectedModelObject, allModelEvaluated)
+  }
+
   ODR <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
 
   ggplot(predicted_df, aes(lubridate::dmy(Date))) +
+
     geom_line(aes(y = predicted_values, colour = "predicted")) +
     geom_line(aes(y = get(ODR), colour = "DR")) + xlab("Date") + ylab("Default Rates") +
     ggtitle(paste0("Model results for ", selectedModel)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
 }
 
-  # predicted.melt<-data.table::melt(predicted_df,c("Date"),setdiff(used_vars,"DR"))
-  #
-  # ggplot(predicted.melt, aes(x = lubridate::dmy(Date), y = value)) + geom_line(colour =
-  #                                                                                c_green) + xlab("Date")+ facet_wrap( ~ variable, scales = 'free')

@@ -10,21 +10,34 @@
 #' validationSampler(macrodata,1:29,30:33,1:48)
 #' call_rmd(models,report_title = "Retail")
 
-call_rmd <- function(model_list, output_file = "report.html", output_dir = getwd(), report_title = "Corporate", report_type='html',...) {
 
+call_rmd <-
+  function(model_list,
+           output_file = "report.html",
+           output_dir = getwd(),
+           report_title = "Corporate",
+           report_type = 'html'
+  ) {
 
+  # input_args <- as.list(match.call())
+  # if (!is.null(input_args$laggedRelation)) {
+  #   laggedRelation <- input_args$laggedRelation
+  # }
+  # if(!is.null(input_args$trainIndex)){
+  #   trainIndex <- eval(input_args$trainIndex)
 
   ## Get directory of report markdown template
   report_dir <- system.file("rmdTemplate/selectedModelReport.rmd", package = "ST.auto.1")
-
 
   render(
     report_dir,
     output_file = output_file,
     output_dir = output_dir,
     intermediates_dir = output_dir,
-    params = list(model_list = model_list,
-                  set_title = report_title)
+    params = list(
+      model_list = model_list,
+      set_title = report_title
+    )
   )
 
 

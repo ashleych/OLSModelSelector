@@ -14,7 +14,7 @@ setwd(wd)
 
 
 
-validationSampler(macrodata,22:52,53:56,22:56)
+validationSampler(macrodata,22:52,53:56,22:80)
 
 def_cols <- c("Date","DR", "DR_logit_FD", "DR_logit_FD_lag1", "DR_Log", "DR_logit")
 vars<-colnames(macrodata)[!colnames(macrodata) %in% def_cols]
@@ -64,13 +64,26 @@ models <-
     "DR_logit_FD ~ avg_oil_pri_barr",
     "DR_logit_FD ~ rl_est_ad_yoy+uae_rl_cons",
     "DR_logit_FD ~ eibor+eibor_yoy",
+    "DR_logit_FD ~ DR_logit_FD_lag1 + uae_ann_imp_yoy + rl_est_ad_log + uae_rl_cons_3qma",
     "DR_logit_FD ~ uae_rl_cons+rl_est_ad_yoy.1"
+
   )
 call_rmd(models,report_title = "Portfolio RAKFIN")
 
 
+#call_rmd("DR_logit_FD ~ avg_oil_pri_barr",report_title = "Portfolio RAKFIN")
+
 ## this will generate excel sheet
-call_excel(models)
+call_excel(model1)
 reporter(models[[1]],report_type = 'excel') -> f
-f$modelName
-f$report_summary
+
+
+#this has lagged variables
+model1 <- c("DR_logit_FD ~ DR_logit_FD_lag1 + uae_ann_imp_yoy + rl_est_ad_log + uae_rl_cons_3qma")
+
+model <-
+  "DR_logit_FD ~ DR_logit_FD_lag1 +uae_ann_imp_yoy+rl_est_ad_log+uae_rl_cons_3qma"
+call_rmd(model)
+
+configDynamic("DR_logit_FD","DR_logit_FD_lag1",1,30)
+rm(configDynamic_Df)

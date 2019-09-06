@@ -58,10 +58,17 @@ opts_chunk$set(
 This file contains the details of the following models
 
 ```{r}
-model_tagging <- data.frame(ModelList = params$model_list,
-                            ModelType = c("Champion", paste0(
-                              "Challenger ", 2:length(params$model_list) - 1
-                            )))
+if (length(params$model_list) == 1) {
+  model_tagging <- data.frame(ModelList = params$model_list,
+                              ModelType = c("Champion"))
+}
+
+if (length(params$model_list) > 1) {
+  model_tagging <- data.frame(ModelList = params$model_list,
+                              ModelType = c("Champion", paste0(
+                                "Challenger ", 2:length(params$model_list) - 1
+                              )))
+}
 
 kable(model_tagging) %>% 
   kable_styling(font_size = 10) %>% 
@@ -129,5 +136,9 @@ for (i in 1:length(varList)) {
 do.call("grid.arrange", c(plots))
 
 
+```
+
+```{r}
+timestamp()
 ```
 

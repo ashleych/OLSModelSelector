@@ -2,8 +2,11 @@
 
 export(call_excel)
 export(call_rmd)
+export(configDynamic)
 export(dfSummaryWriter)
 export(dfWriter)
+export(dynamicCheck)
+export(dynamicForecast)
 export(modelDeveloper)
 export(modelDiagnostics)
 export(modelEvaluator)

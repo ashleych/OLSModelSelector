@@ -25,11 +25,9 @@ Summary Results  for ``r model_i``
 <br><br>
 ```{r echo=FALSE}
 
-
 t <- reporter(model_i)
 
 t$report_summary$estimates_kable
-
 ```
 
 ```{r}
@@ -54,20 +52,29 @@ Observed versus Predicted Values for ``r model_i``
 
 ```{r echo=FALSE,fig.align='center', fig.width = 5, fig.asp = 0.8,message=FALSE, warning=FALSE}
 t$report_pred_plot
-
 ```
 
 <br><br>
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #DT::datatable(t(t$report_predicted_df),options = list(scrollX = TRUE))
-kable(t(t$report_predicted_df)) %>% 
-kable_styling(font_size = 10) %>%
+kable(t(t$report_predicted_df)) %>%
+  kable_styling(font_size = 10) %>%
   scroll_box(width = "100%", height = "200px") 
-
 ```
 <br><br><br><br>
 <br><br><br><br>
+```{r}
+if (nrow(t$report_dynamic_predicted_df)>0) {
+    kable(t$report_dynamic_predicted_df) %>%
+    kable_styling(font_size = 10) %>%
+    scroll_box(width = "100%", height = "200px")
+}
+```
+
+```{r echo=FALSE,fig.align='center', fig.width = 5, fig.asp = 0.8,message=FALSE, warning=FALSE}
+t$report_pred_plot_dynamic
+```
 
 ***
 
