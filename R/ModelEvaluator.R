@@ -10,9 +10,10 @@
 #' @export
 #' @examples
 #' modelEvaluator(allModelObjects) # allModelObjects created by modelDeveloper()
-modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1,normality_threshold=0.1,
+modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.05,normality_threshold=0.05,
                            pvalue_threshold =0.05,
-                           Autocorrelation_threshold=0.1, Stationarity_threshold =0.1){
+                           Autocorrelation_threshold=0.05, Stationarity_threshold =0.05){
+ AUTOCORRELATION_TEST <- "Breusch-Godfrey" #change this to anythng else to use Durbin watson tests instead
 
   #setDT(allModelsDiagnostics)
   allModelsDiagnostics$Heteroskedasticity <-
@@ -34,14 +35,25 @@ modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1
   allModelsDiagnostics$shapiro_results <- allModelsDiagnostics$Normality
 
 
-  allModelsDiagnostics$Autocorrelation <-
+
+  allModelsDiagnostics$Autocorrelation_bg <-
     ifelse(
-      allModelsDiagnostics$dw_pvalue < Autocorrelation_threshold,
+      allModelsDiagnostics$bg_pvalue < Autocorrelation_threshold,
       "Auto-Correlation",
       "No Auto-Correlation"
     )
+allModelsDiagnostics$bg_results<-allModelsDiagnostics$Autocorrelation
 
-  allModelsDiagnostics$dw_results<-allModelsDiagnostics$Autocorrelation
+    #using durbin watson
+    allModelsDiagnostics$Autocorrelation <-
+      ifelse(
+        allModelsDiagnostics$dw_pvalue < Autocorrelation_threshold,
+        "Auto-Correlation",
+        "No Auto-Correlation"
+      )
+    allModelsDiagnostics$dw_results <- allModelsDiagnostics$Autocorrelation
+
+
 
   allModelsDiagnostics$Stationarity <-
     ifelse(allModelsDiagnostics$adf_pvalue > Stationarity_threshold,
@@ -65,7 +77,7 @@ modelEvaluator <- function(allModelsDiagnostics,Heteroskedasticity_threshold=0.1
 
 
   allModelsDiagnostics[, FinalResults := ifelse(
-    ( dfdirectioncheck==1 &
+    (dfdirectioncheck ==1 &
         Heteroskedasticity == "Homoskedasticity" &
         Normality == "Residuals Normally distributed" &
         Autocorrelation == "No Auto-Correlation" &

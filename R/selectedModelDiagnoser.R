@@ -21,24 +21,26 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type
   chosenModelResults <-allModelEvaluated[model==selectedModel,]
 
   # select all stats and pvalues that is to be displayed.
-  stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf","KPSS"),c("_pvalue","_statistic","_results")))
+  stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf","KPSS","bg"),c("_pvalue","_statistic","_results")))
   chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = stats][, rn := .I]
 
   chosenModelResults.melt <-melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "_")][,dcast(.SD, stub ~ var)]
 
   #Creiteris for Display
-  Criteria <- data.table(Check=c("Heteroskedasticity", "Auto-Correlation", "Normality", "Unit Root", "Multicollinearity","Stationarity-KPSS"),
-                         Test=c("Breusch-Pagan Test", "Durbin Watson Test", "Shapiro-Wilk Test", "ADF Test", "VIF","KPSS"),
-                         stub=c( "BP", "dw", "shapiro", "adf", NA,'KPSS'),
-                         Criteria=c( "p > 0.1", "p > 0.1", "p > 0.1", "p < 0.1", "<4"), # this is just for information, the values arent being used anywhere. NO threshold check is being done using this table
-                         Pass=c("Homoskedasticity", "No Auto-Correlation", "Residuals Normally distributed", "Stationary", "No Multicollinearity","Stationary")
+  Criteria <- data.table(Check=c("Heteroskedasticity", "Auto-Correlation", "Normality", "Unit Root", "Multicollinearity","Stationarity-KPSS","Auto-Correlation"),
+                         Test= c("Breusch-Pagan Test", "Durbin Watson Test", "Shapiro-Wilk Test", "ADF Test", "VIF","KPSS","Breusch-Godfrey"),
+                         stub= c( "BP", "dw", "shapiro", "adf", NA,'KPSS','bg'),
+                         Criteria= c( "p > 0.05", "p > 0.05", "p > 0.05", "p < 0.05", "<4","p > 0.05","p > 0.05"), # this is just for information, the values arent being used anywhere. NO threshold check is being done using this table
+                         Pass=c("Homoskedasticity", "No Auto-Correlation", "Residuals Normally distributed", "Stationary", "No Multicollinearity","Stationary","No Auto-Correlation")
   )
+
+
   chosenModelResults_informative <- Criteria[chosenModelResults.melt,on="stub"]
   chosenModelResults_informative[, FINAL:=ifelse(Pass == results, "PASS", "FAIL")]
   chosenModelResults_pretty<-chosenModelResults_informative[,c('Check','Test','statistic','pvalue','Criteria','results','FINAL')]
 
 
-  if (report_type=='html') {
+  if (report_type =='html') {
     return(
     #apply formatting through formattable
     chosenModelResults_pretty %>%

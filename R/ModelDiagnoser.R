@@ -147,7 +147,12 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   dw_statistic <- sapply(dw_test_allModels,function(x) x$dw)
   dw_p <- sapply(dw_test_allModels,function(x) x$p)
 
+  bg_test_allModels <-
+    lapply(allModelObjects, function(x)
+      bgtest(x))
 
+  bg_statistic <- unname(sapply(bg_test_allModels,function(x) x$statistic))
+  bg_pvalue <- sapply(bg_test_allModels,function(x) x$p.value)
 
   ### Shapiro test test for Normality
 
@@ -212,7 +217,9 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
                          adf_pvalue ,
                          KPSS_statistic,
                          KPSS_pvalue,
-                         dfdirectioncheck
+                         dfdirectioncheck,
+                         bg_statistic,
+                         bg_pvalue
   )
 
   results_round <- as.data.table(lapply(results, function(x) {

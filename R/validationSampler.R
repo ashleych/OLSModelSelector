@@ -12,6 +12,7 @@
 validationSampler <- function(macroecodata,rn_train,rn_test,rn_forecast){
 setDT(macroecodata)
 #Enter row numbers for trainnig, test and for prediction. please note that the rownumbers in Excel include headers.
+print("validation sampler being run")
 train_df <- macroecodata[rn_train,]
 test_df <- macroecodata[rn_test, ]
 forecast_df <- macroecodata[rn_forecast, ]
