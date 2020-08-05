@@ -92,6 +92,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     summary(x)$adj.r.squared)
   RMSE     <- sapply(allModelObjects, function(x)
     summary(x)$sigma)
+  print("Rsquared done")
   fstats   <- sapply(allModelObjects, calcPval)
 
   MAPE_fun<-function(y_pred, y_true)
@@ -113,6 +114,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     MAPE_fun(y_pred,y_true)
 
   })
+  print("MAPE  done")
 
   MAPE_training <- sapply(allModelObjects, function(x) {
     Response_var <- as.character((x$terms)[[2]])
@@ -128,6 +130,8 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     MAPE_fun(y_pred,y_true)
 
   })
+
+  print("MAPE on testing done")
   #### BP tests
   bp_test_allModels <-
     lapply(allModelObjects,bptest)
@@ -136,6 +140,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
     sapply(bp_test_allModels, function(x) x$statistic)
 
   BP_pvalue <- sapply(bp_test_allModels, function(x) x$p.value)
+  print("BP Tests done")
 
 
   ###DurbinWatson Tests
@@ -146,6 +151,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
   dw_statistic <- sapply(dw_test_allModels,function(x) x$dw)
   dw_p <- sapply(dw_test_allModels,function(x) x$p)
+  print("DW Tests done")
 
   bg_test_allModels <-
     lapply(allModelObjects, function(x)
@@ -153,6 +159,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
 
   bg_statistic <- unname(sapply(bg_test_allModels,function(x) x$statistic))
   bg_pvalue <- sapply(bg_test_allModels,function(x) x$p.value)
+  print("BG Tests done")
 
   ### Shapiro test test for Normality
 
@@ -167,6 +174,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   shapiro_pvalue <-
     sapply(shapiro_test_allModels, function(x)  x$p.value)
 
+  print("Shapiro Wilkes Tests done")
 
   ## Unit Root Tests
 
@@ -182,6 +190,8 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   adf_pvalue <-
     sapply(ADF_allModels, function(x) x$p.value)
 
+  print("ADF Tests done")
+
   ## KPSS tests
 
   KPSS_allModels <-
@@ -192,7 +202,7 @@ modelDiagnostics <- function(allModelObjects,testData=test_df,direction_config=m
   KPSS_pvalue <-
     sapply(KPSS_allModels, function(x) x$p.value)
 
-
+  print("KPSS Tests done")
   results <- data.table( model = as.character(names(allModelObjects)),
                          #NoOfCoef = NoOfCoef,
                          dfCoefNum,
