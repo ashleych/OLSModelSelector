@@ -73,6 +73,10 @@ reporter <-
     residualsVsFittedPlot <-function() {plot(selectedModelObject,which=1,col=c("dark blue"))}
     normalQQPlot<- function() { plot(selectedModelObject,which=2,col=c("dark blue"))}
     scale_locationPlot<-function() { plot(selectedModelObject,which=3,col=c("dark blue"))}
+    acfPlot<-function() { 
+    AutoCorrelation <- acf(selectedModelObject$residuals, plot = FALSE)
+    plot(AutoCorrelation, main = "Residuals ACF Plot")
+    }
 
 
     if (nrow(dynamic) == 1) {
@@ -117,7 +121,8 @@ reporter <-
         report_pred_plot_dynamic,
         residualsVsFittedPlot,
         normalQQPlot,
-        scale_locationPlot
+        scale_locationPlot,
+        acfPlot
         
       )
 
@@ -131,7 +136,8 @@ reporter <-
       "report_pred_plot_dynamic",
       "residualsVsFittedPlot",
       "normalQQPlot",
-      "scale_locationPlot"
+      "scale_locationPlot",
+      "acfPlot"
     )
 
     report_details

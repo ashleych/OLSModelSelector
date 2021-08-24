@@ -250,6 +250,11 @@ print(excelDetails$scale_locationPlot())
 insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 64,
            startCol = 15, fileType = "png", units = "in", dpi = 300)
 
+# ACF Plot ---------------------------------------------------------
+print(excelDetails$acfPlot())
+insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 24,
+           startCol = 21, fileType = "png", units = "in", dpi = 300)
+
 openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
 }
 
