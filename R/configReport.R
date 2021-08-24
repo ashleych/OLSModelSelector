@@ -69,6 +69,10 @@ reporter <-
                            selectedModelObject,
                            allModelEvaluated,
                            predicted_df = report_dynamic_predicted_df)
+    
+    residualsVsFittedPlot <-function() {plot(selectedModelObject,which=1,col=c("dark blue"))}
+    normalQQPlot<- function() { plot(selectedModelObject,which=2,col=c("dark blue"))}
+    scale_locationPlot<-function() { plot(selectedModelObject,which=3,col=c("dark blue"))}
 
 
     if (nrow(dynamic) == 1) {
@@ -110,7 +114,11 @@ reporter <-
         report_predicted_df,
         report_pred_plot,
         report_dynamic_predicted_df,
-        report_pred_plot_dynamic
+        report_pred_plot_dynamic,
+        residualsVsFittedPlot,
+        normalQQPlot,
+        scale_locationPlot
+        
       )
 
     names(report_details) = c(
@@ -120,7 +128,10 @@ reporter <-
       "report_predicted_df",
       "report_pred_plot",
       "report_dynamic_predicted_df",
-      "report_pred_plot_dynamic"
+      "report_pred_plot_dynamic",
+      "residualsVsFittedPlot",
+      "normalQQPlot",
+      "scale_locationPlot"
     )
 
     report_details
