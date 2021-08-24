@@ -231,7 +231,26 @@ print(excelDetails$report_pred_plot)
   insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 4,
              startCol = 15, fileType = "png", units = "in", dpi = 300)
 
-  openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
+
+# Residual Plot ---------------------------------------------------------
+print(excelDetails$residualsVsFittedPlot())
+insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 24,
+           startCol = 15, fileType = "png", units = "in", dpi = 300)
+
+#   openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
+# }
+
+# QQ Plot ---------------------------------------------------------
+print(excelDetails$normalQQPlot())
+insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 44,
+           startCol = 15, fileType = "png", units = "in", dpi = 300)
+
+# scale_locationPlot Plot ---------------------------------------------------------
+print(excelDetails$scale_locationPlot())
+insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 64,
+           startCol = 15, fileType = "png", units = "in", dpi = 300)
+
+openxlsx::saveWorkbook(wb,file.name,overwrite = TRUE)
 }
 
 
