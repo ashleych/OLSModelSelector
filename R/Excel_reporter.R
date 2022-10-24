@@ -12,9 +12,14 @@
 
 call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), report_title = "Corporate",...){
 #Check if additional scenarios are to be used
-  
+
+  sensitivity=c()
+  scenarios<- list()
+  scenario_names<-list()
+  scenario_colors<-list()
 input_args_list <- list(...)
 if ("scenarios" %in% names(input_args_list)) {
+
   scenarios <- input_args_list$scenarios
   if ("scenario_names" %in% names(input_args_list)){
     scenario_names<- input_args_list$scenario_names
@@ -22,15 +27,13 @@ if ("scenarios" %in% names(input_args_list)) {
     scenario_names<- paste0("scenario_",seq(length(scenarios)))
   }
   
-} else {
-  scenarios<- list()
-  scenario_names<-list()
-}
+} 
 if ("scenario_colors" %in% names(input_args_list)) {
   scenario_colors <- input_args_list$scenario_colors
 
-} else {
-  scenario_colors<-list()
+} 
+if ('sensitivity' %in% names(input_args_list)) {
+  sensitivity<- input_args_list$sensitivity
 }
 # Code to output and format Excel sheets ----------------------------------
   if (is.null(output_file)) {
@@ -56,7 +59,8 @@ if ("scenario_colors" %in% names(input_args_list)) {
       sheetName = names(model_list[x]),
       scenarios=scenarios,
       scenario_names=scenario_names,
-      scenario_colors=scenario_colors
+      scenario_colors=scenario_colors,
+      sensitivity=sensitivity
     )
   })
 
@@ -103,8 +107,13 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   } else {
     scenario_colors <- list()
   }
+  if ("sensitivity" %in% names(input_arg_list) ){
+    sensitivity <- input_arg_list$sensitivity
+  } else {
+    sensitivity <- list()
+  }
   # this contains all the results to be shown in the Excel file
-  excelDetails <- reporter(model,report_type = "excel",scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors)
+  excelDetails <- reporter(model,report_type = "excel",scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity)
 
   #check if files already exists in the current directory in which case, it loads it else it creates a new file
   if(!file.exists(file.name))
@@ -313,6 +322,42 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   
   ## END OF Scenario Predictions Rates ----------------------
   
+  ##Start of sensitivity tables
+  if (exists("endRowScenarioPredictions")){
+    
+    startRowSensitivity <- endRowScenarioPredictions + 100 # since some 50-60 rows are taken up by the charts below scenario tables
+    
+  } else {
+    startRowSensitivity <-  startRowPredicted +nrow(predicted_df) + 10
+  }
+  startColumn_Sensitivity <- startColumn
+  for (sensitivity_df in excelDetails$ModelSensitivities_df_list) {
+    # sensitivity for which column 
+    mev_name<- comment(sensitivity_df)
+    openxlsx::writeData(wb = wb,sheet = sheetName,x=mev_name,startRow = startRowSensitivity-1,startCol =startColumn_Sensitivity )
+    
+    
+    openxlsx::writeDataTable(
+      wb,
+      sheetName,
+      sensitivity_df,
+      startCol = startColumn_Sensitivity ,
+      tableStyle = "TableStyleLight1",
+      withFilter = FALSE,
+      startRow = startRowSensitivity,
+      headerStyle = headerStyle,
+      colNames = TRUE,
+      bandedRows = TRUE
+    )
+    
+    # startRowSensitivity<-startRowSensitivity +dim(sensitivity_df)[1]+ 4
+    startColumn_Sensitivity <- startColumn_Sensitivity +dim(sensitivity_df)[2]+ 4
+  }
+  
+
+  
+  
+  ## End of sensitivity tables
 
 # Predicted plot ----------------------------------------------------------
 print(excelDetails$report_pred_plot)

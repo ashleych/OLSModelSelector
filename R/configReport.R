@@ -26,6 +26,13 @@ reporter <-
     } else {
       scenario_colors <- list()
     }
+    
+    if ("sensitivity" %in% names(input_arg_list)) {
+      sensitivity <- input_arg_list$sensitivity
+    } else {
+      sensitivity <- list()
+    }
+    
     model_LHS <- trimws(unlist(strsplit(model, "[~]"))[[1]])
     RHS_combined <- trimws(unlist(strsplit(model, "[~]"))[[2]])
     model_RHS <- trimws(unlist(strsplit(RHS_combined, '[+]')))
@@ -67,7 +74,7 @@ reporter <-
     # start of scenario forecasts and charts--------------------------------
     selectedModelScenariosCharts <- list()
     scenario_list <- c()
-    scenarioMEVCharts<-c()
+    scenarioMEVCharts <- c()
     if (length(scenarios) > 0) {
       scenario_list = c()
       for (i in 1:length(scenarios)) {
@@ -91,20 +98,43 @@ reporter <-
                                         copy(report_predicted_df),
                                         scenario_colors = scenario_colors)
         
-        scenarioMEVCharts<- selectedModelScenariosMEVCharter(scenario_list,copy(report_predicted_df),model_RHS,scenario_colors = scenario_colors) 
+        scenarioMEVCharts <-
+          selectedModelScenariosMEVCharter(scenario_list,
+                                           copy(report_predicted_df),
+                                           model_RHS,
+                                           scenario_colors = scenario_colors)
         
       } else {
         selectedModelScenariosCharts <-
           selectedModelScenariosCharter(scenario_list, copy(report_predicted_df))
         
-        scenarioMEVCharts<- selectedModelScenariosMEVCharter(scenario_list,copy(report_predicted_df),model_RHS) 
+        scenarioMEVCharts <-
+          selectedModelScenariosMEVCharter(scenario_list, copy(report_predicted_df), model_RHS)
         
         
       }
       
-    } 
+    }
     
     # end of scenario forecasts and charts--------------------------------
+    
+    ## start of model sensitivity analyser------------------------------
+    if (length(sensitivity) > 0) {
+      ModelSensitivities_df_list <-
+        ModelSensitiser(
+          selectedModel,
+          selectedModelObject,
+          copy(report_predicted_df),
+          sensitivity,
+          model_RHS
+        )
+      
+    }
+    
+    
+    
+    
+    ## end of model sensitivity analyser------------------------------
     
     dynamic <- dynamicCheck(selectedModel)
     
@@ -158,7 +188,7 @@ reporter <-
     
     if (exists("transformConfig_Df", envir = .GlobalEnv)) {
       transformRule <-
-        transformConfig_Df[depVar == model_LHS, ]$transformRule
+        transformConfig_Df[depVar == model_LHS,]$transformRule
       
       div100 = function(x) {
         return(x / 100)
@@ -200,7 +230,8 @@ reporter <-
         acfPlot,
         scenario_list,
         selectedModelScenariosCharts,
-        scenarioMEVCharts
+        scenarioMEVCharts,
+        ModelSensitivities_df_list
         
       )
     
@@ -218,7 +249,8 @@ reporter <-
       "acfPlot",
       "scenario_list",
       "selectedModelScenariosCharts",
-      "scenarioMEVCharts"
+      "scenarioMEVCharts",
+      "ModelSensitivities_df_list"
     )
     
     report_details
