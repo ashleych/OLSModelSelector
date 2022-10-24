@@ -149,10 +149,9 @@ selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,
     
   }
 
-  
-  print('here')
-  n <- length(plotList)
-  nCol <- floor(sqrt(n))
+  # 
+  # n <- length(plotList)
+  # nCol <- floor(sqrt(n))
   # plot_grid<-do.call("grid.arrange", c(plotList, ncol=2))
   return(plotList)
   

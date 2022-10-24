@@ -26,7 +26,7 @@ if ("scenarios" %in% names(input_args_list)) {
   scenarios<- list()
   scenario_names<-list()
 }
-if ("scenarios" %in% names(input_args_list)) {
+if ("scenario_colors" %in% names(input_args_list)) {
   scenario_colors <- input_args_list$scenario_colors
 
 } else {
@@ -66,6 +66,11 @@ if ("scenarios" %in% names(input_args_list)) {
     dfWriter(file.name,"TestingData",test_df)
     dfWriter(file.name,"Forecast",forecast_df)
 
+    if (length(scenarios)>0){
+      for(i in 1:length(scenarios)){
+        dfWriter(file.name,scenario_names[[i]],scenarios[[i]])
+      }
+    }
   # output_dir <- getwd()
   output_file <- file.name
   ## Open report
@@ -264,6 +269,7 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   )
 
  ## Scenario Predictions Rates ----------------------
+ ## Scenario section run only if scenario_list length >0
   if (length(excelDetails$scenario_list)>0){
   startRowScenarioPredictions <- startRowPredicted +nrow(predicted_df) + 10
   startColumn_ScenarioPredictions <- startColumn
@@ -292,7 +298,7 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   insertPlot(wb, sheetName, width = 20, height = 4, xy = NULL, startRow = endRowScenarioPredictions + 4,
              startCol = 10, fileType = "png", units = "in", dpi = 300)
   
-  }
+  
 
   ## Scenario MEV Plots -----------------------------------------------
   # plot_grid<-do.call("grid.arrange", c(plotList, ncol=2))
@@ -302,7 +308,11 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   insertPlot(wb, sheetName, width = 20, height = 10, xy = NULL, startRow = endRowScenarioPredictions + 30,
              startCol = 10, fileType = "png", units = "in", dpi = 300)
   
-
+  }
+  ## END OF IF check of scenario_list length >0 ----------------------
+  
+  ## END OF Scenario Predictions Rates ----------------------
+  
 
 # Predicted plot ----------------------------------------------------------
 print(excelDetails$report_pred_plot)
