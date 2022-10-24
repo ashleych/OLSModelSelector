@@ -4,7 +4,7 @@
 \alias{sheetCreator}
 \title{Creates and formats sheets in Excel using openxslx. Called internally by call_excel function}
 \usage{
-sheetCreator(model, file.name, sheetName)
+sheetCreator(model, file.name, sheetName, ...)
 }
 \arguments{
 \item{model}{name of the model}

@@ -4,9 +4,14 @@
 \alias{modelEvaluator}
 \title{Evaluates and classifies models into pass or fail}
 \usage{
-modelEvaluator(allModelsDiagnostics, Heteroskedasticity_threshold = 0.05,
-  normality_threshold = 0.05, pvalue_threshold = 0.05,
-  Autocorrelation_threshold = 0.05, Stationarity_threshold = 0.05)
+modelEvaluator(
+  allModelsDiagnostics,
+  Heteroskedasticity_threshold = 0.05,
+  normality_threshold = 0.05,
+  pvalue_threshold = 0.05,
+  Autocorrelation_threshold = 0.05,
+  Stationarity_threshold = 0.05
+)
 }
 \arguments{
 \item{Heteroskedasticity_threshold}{Threshold for pvalue for BP test}

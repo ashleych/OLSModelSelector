@@ -10,7 +10,28 @@
 #' models <-c("DR_logit_FD ~ rl_est_ad+uae_ann_imp_yoy+uae_rl_cons_3qma","DR_logit_FD ~ uae_ann_imp_yoy+rl_est_ad_log+uae_rl_cons_3qma","DR_logit_FD ~ uae_ann_imp_yoy+rl_est_ad_3qma+uae_rl_cons_3qma")
 #' call_excel(models,output_file = "Report2019") # allModelObjects created by modelDeveloper()
 
-call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), report_title = "Corporate"){
+call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), report_title = "Corporate",...){
+#Check if additional scenarios are to be used
+  
+input_args_list <- list(...)
+if ("scenarios" %in% names(input_args_list)) {
+  scenarios <- input_args_list$scenarios
+  if ("scenario_names" %in% names(input_args_list)){
+    scenario_names<- input_args_list$scenario_names
+  } else{
+    scenario_names<- paste0("scenario_",seq(length(scenarios)))
+  }
+  
+} else {
+  scenarios<- list()
+  scenario_names<-list()
+}
+if ("scenarios" %in% names(input_args_list)) {
+  scenario_colors <- input_args_list$scenario_colors
+
+} else {
+  scenario_colors<-list()
+}
 # Code to output and format Excel sheets ----------------------------------
   if (is.null(output_file)) {
     file.name <- make.names(paste0(report_title, Sys.time(), '.xlsx'))
@@ -32,7 +53,10 @@ call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), rep
     sheetCreator(
       model = model_list[[x]],
       file.name = file.name,
-      sheetName = names(model_list[x])
+      sheetName = names(model_list[x]),
+      scenarios=scenarios,
+      scenario_names=scenario_names,
+      scenario_colors=scenario_colors
     )
   })
 
@@ -59,9 +83,23 @@ call_excel <- function(model_list, output_file = NULL, output_dir = getwd(), rep
 #' @export
 #' @examples
 
-sheetCreator <- function(model,file.name, sheetName) {
+sheetCreator <- function(model,file.name, sheetName,...) {
+  input_arg_list <- list(...)
+  if ("scenarios" %in% names(input_arg_list)) {
+    scenarios <- input_arg_list$scenarios
+    scenario_names<-input_arg_list$scenario_names
+  } else {
+    scenarios <- list()
+    scenario_names<-list()
+  }
+  
+  if ("scenario_colors" %in% names(input_arg_list) ){
+    scenario_colors <- input_arg_list$scenario_colors
+  } else {
+    scenario_colors <- list()
+  }
   # this contains all the results to be shown in the Excel file
-  excelDetails <- reporter(model,report_type = "excel")
+  excelDetails <- reporter(model,report_type = "excel",scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors)
 
   #check if files already exists in the current directory in which case, it loads it else it creates a new file
   if(!file.exists(file.name))
@@ -225,6 +263,46 @@ sheetCreator <- function(model,file.name, sheetName) {
     bandedRows = TRUE
   )
 
+ ## Scenario Predictions Rates ----------------------
+  if (length(excelDetails$scenario_list)>0){
+  startRowScenarioPredictions <- startRowPredicted +nrow(predicted_df) + 10
+  startColumn_ScenarioPredictions <- startColumn
+  
+  for (scenario in excelDetails$scenario_list) {
+    openxlsx::writeData(wb = wb,sheet = sheetName,x=scenario@scenario_name,startRow = startRowScenarioPredictions-1,startCol =startColumn_ScenarioPredictions )
+      openxlsx::writeDataTable(
+        wb,
+        sheetName,
+        scenario@predictions ,
+        startCol = startColumn_ScenarioPredictions ,
+        tableStyle = "TableStyleLight1",
+        withFilter = FALSE,
+        startRow = startRowScenarioPredictions,
+        headerStyle = headerStyle,
+        colNames = TRUE,
+        bandedRows = TRUE
+      )
+    startColumn_ScenarioPredictions<-startColumn_ScenarioPredictions+dim(scenario@predictions)[2]+4
+  }
+  
+  endRowScenarioPredictions <- startRowScenarioPredictions + dim(scenario@predictions)[1]
+  
+  ## Scenario predictions Plots -----------------------------------------------
+  print(excelDetails$selectedModelScenariosCharts)
+  insertPlot(wb, sheetName, width = 20, height = 4, xy = NULL, startRow = endRowScenarioPredictions + 4,
+             startCol = 10, fileType = "png", units = "in", dpi = 300)
+  
+  }
+
+  ## Scenario MEV Plots -----------------------------------------------
+  # plot_grid<-do.call("grid.arrange", c(plotList, ncol=2))
+  # print(excelDetails$scenarioMEVCharts)
+  plot_grid<-do.call("grid.arrange", c(excelDetails$scenarioMEVCharts, ncol=2))
+  
+  insertPlot(wb, sheetName, width = 20, height = 10, xy = NULL, startRow = endRowScenarioPredictions + 30,
+             startCol = 10, fileType = "png", units = "in", dpi = 300)
+  
+
 
 # Predicted plot ----------------------------------------------------------
 print(excelDetails$report_pred_plot)
@@ -247,8 +325,8 @@ insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 44,
 
 # scale_locationPlot Plot ---------------------------------------------------------
 print(excelDetails$scale_locationPlot())
-insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 64,
-           startCol = 15, fileType = "png", units = "in", dpi = 300)
+insertPlot(wb, sheetName, width = 6, height = 4, xy = NULL, startRow = 44,
+           startCol = 21, fileType = "png", units = "in", dpi = 300)
 
 # ACF Plot ---------------------------------------------------------
 print(excelDetails$acfPlot())

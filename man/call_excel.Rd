@@ -4,8 +4,13 @@
 \alias{call_excel}
 \title{Provides detailed diagnostic tests including tests for stationarity, autocorrelation for each model}
 \usage{
-call_excel(model_list, output_file = NULL, output_dir = getwd(),
-  report_title = "Corporate")
+call_excel(
+  model_list,
+  output_file = NULL,
+  output_dir = getwd(),
+  report_title = "Corporate",
+  ...
+)
 }
 \arguments{
 \item{output_file}{name of the output file without extension}

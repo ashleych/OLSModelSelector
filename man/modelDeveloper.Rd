@@ -4,8 +4,13 @@
 \alias{modelDeveloper}
 \title{Generates all models using combination of dependent and independent variables provided}
 \usage{
-modelDeveloper(LHS_vars, RHS_vars, multiple = TRUE, no_of_vars,
-  trainData = train_df)
+modelDeveloper(
+  LHS_vars,
+  RHS_vars,
+  multiple = TRUE,
+  no_of_vars,
+  trainData = train_df
+)
 }
 \arguments{
 \item{LHS_vars}{LHS of the regression function of the form Y ~ X1 + X2. This is the vector of response variable. Example default rates, or PIT PDs for default rate forecasting}

@@ -4,8 +4,12 @@
 \alias{dynamicForecast}
 \title{Dynamic forecasting function}
 \usage{
-dynamicForecast(selectedModel, selectedModelObject, laggedRelation,
-  trainIndex = nrow(train_df))
+dynamicForecast(
+  selectedModel,
+  selectedModelObject,
+  laggedRelation,
+  trainIndex = nrow(train_df)
+)
 }
 \arguments{
 \item{selectedModel}{Model defined by means of LHS and RHS(to be passed as a list)}

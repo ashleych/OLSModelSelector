@@ -17,6 +17,7 @@ train_df <- macroecodata[rn_train,]
 test_df <- macroecodata[rn_test, ]
 forecast_df <- macroecodata[rn_forecast, ]
 list2env(list(train_df=train_df,test_df=test_df,forecast_df=forecast_df), envir = .GlobalEnv)
+
 }
 
 
@@ -104,5 +105,10 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
   return(allModelObjects)
 }
 
+
+#' generates ScenarioClass
+#' @exportClass scenarioClass
+
+setClass("scenarioClass", slots=list(scenario_name="character",scenario_input="data.frame",predictions="data.frame"))
 
 

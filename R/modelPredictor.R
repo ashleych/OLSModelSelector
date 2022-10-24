@@ -7,12 +7,26 @@
 #' @examples
 #' selectedModelForecaster(selectedModel,allModelEvaluated)
 
-selectedModelForecaster <- function(selectedModel,selectedModelObject,allModelEvaluated){
-  #allModelEvaluated is not needed, to remove from this function as well as charter
-  predicted_values <- predict(selectedModelObject,newdata = forecast_df)
+selectedModelForecaster <- function(selectedModel,selectedModelObject,allModelEvaluated,...){
+  
   used_vars <- trimws(unlist(strsplit(selectedModel,"[+,~]")))
   keep_vars<- c("Date",used_vars,"predicted_values")
-  predicted_df <- data.table(cbind(forecast_df,predicted_values))[,..keep_vars]
+  
+  input_arg_list <- list(...)
+  if ("scenario_input_df" %in% names(input_arg_list)) {
+
+    predicted_values <- predict(selectedModelObject,newdata = input_arg_list$scenario_input_df)
+    
+    predicted_df <- data.table(cbind(input_arg_list$scenario_input_df,predicted_values))[,..keep_vars]
+  } 
+  else {
+    #allModelEvaluated is not needed, to remove from this function as well as charter
+    predicted_values <- predict(selectedModelObject,newdata = forecast_df)
+    
+    predicted_df <- data.table(cbind(forecast_df,predicted_values))[,..keep_vars]
+    
+  }
+
   return(predicted_df)
 }
 
@@ -48,3 +62,99 @@ selectedModelCharter <- function(selectedModel, selectedModelObject,allModelEval
     ggtitle(paste0("Model results for ", selectedModel)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
 }
 
+
+
+#' Chart the scenarios predictions 
+#'
+#' @param scenariosList list containing all scenarios with scenario names and predictions 
+#' @return Returns ggplot
+#' @export
+#' @examples
+#' selectedModelScenariosCharter(scenariosList,baseline_predictions)
+
+selectedModelScenariosCharter <- function(scenariosList,baseline_predictions,...) {
+  # input_list <- as.list(substitute(list(...)))
+  input_arg_list <- list(...)
+
+  setDT(baseline_predictions)
+  setnames(baseline_predictions,'predicted_values','baseline')
+  all_predictions<-baseline_predictions[,c("Date",'baseline')]
+  all_scenario_names<-c()
+  for (scenario in scenariosList) {
+    scenario_name<-scenario@scenario_name
+    scenario_predictions=scenario@predictions
+    setDT(scenario_predictions)
+    scenario_predictions<-scenario_predictions[,c("Date",'predicted_values')]
+    all_predictions<-all_predictions[scenario_predictions,on='Date']
+    setnames(all_predictions,'predicted_values',scenario_name)
+    all_scenario_names<-c(all_scenario_names,scenario_name)
+  }
+  # ODR <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
+  plot_data<-melt(all_predictions,id.vars ='Date',variable.name = 'scenario',value.name = 'predictions')
+
+  if ("scenario_colors" %in% names(input_arg_list)) {
+    scenario_colors <- c(input_arg_list$scenario_colors,'gray')
+    colors<- c('green','blue','red')
+    names(scenario_colors) <- c(all_scenario_names,'baseline')
+    p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = predictions,color = scenario)) + scale_colour_manual(values=scenario_colors)+ geom_line()  + xlab("Time") +ggtitle(paste0("Scenario predictions ")) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+  } else {
+    p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = predictions,color = scenario)) +  geom_line() + xlab("Time")
+      ggtitle(paste0("Scenario predictions ")) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+  }
+  return(p)
+  
+
+}
+
+
+
+#' Chart the scenarios MEVs 
+#'
+#' @param scenariosList list containing all scenarios with scenario names and predictions 
+#' @return Returns ggplot
+#' @export
+#' @examples
+#' selectedModelScenariosCharter(scenariosList,baseline_predictions)
+
+selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,mevs,...) {
+  # input_list <- as.list(substitute(list(...)))
+  input_arg_list <- list(...)
+  
+  setDT(baseline_predictions)
+  baseline_predictions[,scenario:='baseline']
+
+  make_long_format<-function(x){
+    x@predictions[,scenario:=x@scenario_name]
+    return(x@predictions)
+  }
+  all_scenarios_list<-lapply(scenariosList,make_long_format)
+  all_scenario_names<- lapply(scenariosList,function(x) x@scenario_name)
+
+  plot_data<-rbindlist(all_scenarios_list)
+  plot_data<-rbindlist(list(plot_data,baseline_predictions))
+  # plot_data<-melt(all_scenarios_list,id.vars ='Date', measure.vars=mevs, variable.name = 'scenario',value.name = 'scenario_values')
+  plotList=list()
+  for (mev in mevs) {
+    plot_cols<-c("Date",'scenario',mev)
+    mev_col<-sym(mev)
+    if ("scenario_colors" %in% names(input_arg_list)) {
+      scenario_colors <- c(input_arg_list$scenario_colors,'gray')
+      colors<- c('green','blue','red')
+      names(scenario_colors) <- c(all_scenario_names,'baseline')
+      p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) + scale_colour_manual(values=scenario_colors)+ geom_line()  + xlab("Time") +ggtitle(paste0("Macrovariables across scenarios -",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+    } else {
+      p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) +  geom_line() + xlab("Time") + ggtitle(paste0("Macrovariables across scenarios - ",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+    }
+    plotList <- append(plotList,list(p))
+    
+  }
+
+  
+  print('here')
+  n <- length(plotList)
+  nCol <- floor(sqrt(n))
+  # plot_grid<-do.call("grid.arrange", c(plotList, ncol=2))
+  return(plotList)
+  
+  
+}

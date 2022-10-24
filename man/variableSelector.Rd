@@ -5,8 +5,7 @@
 \title{Filter variable list by running single variable regressions and selecting models based on R-squared higher than threshold (default threshold is 5%). This
 runs the modelDeveloper function with no_of_vars  =  1}
 \usage{
-variableSelector(LHS_vars, RHS_vars, trainData = train_df,
-  R2Threshold = 0.1)
+variableSelector(LHS_vars, RHS_vars, trainData = train_df, R2Threshold = 0.1)
 }
 \arguments{
 \item{LHS_vars}{LHS of the regression function of the form Y ~ X1 + X2. This is the vector of response variable. Example default rates, or PIT PDs for default rate forecasting}
