@@ -163,6 +163,9 @@ call_excel(models,report_title = "Portfolio A")
 
 
 ## Scenario Analysis
+Generating some dummy scenario data for upturn and downturn. Generally these are assumed to be available to the model developer in csv files or xlsx files, and it would be read into as dataframes. We need to provide the names of the dataframes that contain these scenarios
+
+These dataframes should be in the same format as macrodata especially the date format should be the same as macrodata.
 ```
 
 ST.auto.1::validationSampler(macrodata,1:29,30:33,1:48)
@@ -181,36 +184,44 @@ downturn<-downturn[,c(mevs):=.SD*0.95,.SDcols = mevs] # One needs to read scenar
 ```
 
 ## Scenario results
+this will generate per model scenario results as well as some charts, if you dont provide scenario names,it will name the scenarios as scenario_1, scenario_2 etc
 ```
 model=c(  "DR ~ad_hot_occ +avg_oil_pri_barr ","DR ~ad_hot_occ ")
-call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn')) # this will generate per model scenario results as well as some charts, if you dont procide scenario names,it will name the scenarios as scenario_1, scenario_2 etc
+call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn')) # 
 ```
 
 
 ## scenario results where you want to control colours in the graph
 
+Provision for corresponding colors for each scenario, this is to avoid R allocating non intuitive colors to scenarios (e.g. green to downturn). IN the example below upturn will be in green, downturn will be in red, and baseline will be in gray (Baseline colour is not alterable for now)
 ```
 model=c(  "DR ~ad_hot_occ +avg_oil_pri_barr ","DR ~ad_hot_occ ")
-call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn'),scenario_colors=c('green','red')) # provision for coresponding colors for each scenario, this is to avoid R allocating unintuitive colours to scenarios (eg green to downturn)
+call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn'),scenario_colors=c('green','red')) 
 ```
 
 please note in this the baseline is assumed to be the the details already in forecast_df, this by default is shaded gray. So to avoid confusion do not provide gray as an input colour
-If you need more colours, run colors() to see the list of all colors in R, ensure the strings are from that list. 
+If you need more colors (say for more scenarios), run colors() to see the list of all colors in R, ensure the strings are from that list. 
+Some additional colours that can be used are "orange", "blue",'brown','yellow','violet'. Run colors() to see more
 TODO: to do a validation check for color validity
 
 ## Sensitivity analysis
 
- user has to provide the list of MEVs that are to be sensitised in the format below
- the user has to provide the sensitivity value, and the system will do the upturn and downturn using that. F
- for eg, if user provides a value of 0.1, then the tool will multiply that baseline MEV from forecast_df by 1.1 and also by 0.9
+ user has to provide the list of MEVs that are to be sensitised in the form of named value pairs. 
+ the user has to provide the sensitivity value, and the system will do the upturn and downturn using that. for eg, if user provides a value of 0.1, then the tool will multiply that baseline MEV from forecast_df by 1.1 and also by 0.9. In the example above, ad_hot_occ will be sensitised upwards and downwards by 5% and avg_oil_pri_barr by 7%
+
 ```
 call_excel(model,scenarios=list(upturn,downturn),sensitivity=c(ad_hot_occ=0.05,avg_oil_pri_barr=0.07))
 
 ```
+
 TODO: Graphs for sensitivity
 
- No need to provide scenarios as such here, which is just shown for comprehensiveness. Sensitivity analsys can be done without Sccenario analysis and vice versa
- 
+No need to provide scenarios as such here, which is just shown for comprehensiveness. Sensitivity analsys can be done without Sccenario analysis and vice versa. Example shown below
+
+```
+call_excel(model,sensitivity=c(ad_hot_occ=0.05,avg_oil_pri_barr=0.07))
+
+```
  
 ### Installation issues on Windows especially
 Try running this in case it fails to install because of warnings
