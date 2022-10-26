@@ -135,7 +135,8 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
   # 
   input_arg_list <- list(...)
   mev_sensitivity_df_list=list()
-  for(mev in names(sensitivity)){
+  mevs_sensitivity= sensitivity[names(sensitivity) %in% rhs] # use the sensitivity for ones that are present in the model
+  for(mev in names(mevs_sensitivity)){
     #allModelEvaluated is not needed, to remove from this function as well as charter
     
     ### Upwards sensitivity
@@ -158,7 +159,7 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
     comment(overall_mev_sensitivity)<-mev
     mev_sensitivity_df_list <-c(mev_sensitivity_df_list,list(overall_mev_sensitivity))
   }
-  names(mev_sensitivity_df_list) <- names(sensitivity)
+  names(mev_sensitivity_df_list) <- names(mevs_sensitivity)
 
   
   return(mev_sensitivity_df_list)

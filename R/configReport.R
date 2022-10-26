@@ -75,6 +75,7 @@ reporter <-
     selectedModelScenariosCharts <- list()
     scenario_list <- c()
     scenarioMEVCharts <- c()
+    ModelSensitivities_df_list<-c()
     if (length(scenarios) > 0) {
       scenario_list = c()
       for (i in 1:length(scenarios)) {
