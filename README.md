@@ -157,13 +157,12 @@ models <-
     "DR~avg_oil_pri_barrel_lag_2",
     "DR~Non_oil_ECI_yoy_ch_6QMA+avg_oil_pri_barrel_6QMA_lag_1"
   )
-#call_rmd(models,report_title = "Portfolio A")
-#Uncomment and run above code to obtain html report
+call_excel(models,report_title = "Portfolio A")
 
 ```
 
 
-## set up scenario inputs
+## Scenario Analysis
 ```
 
 ST.auto.1::validationSampler(macrodata,1:29,30:33,1:48)
@@ -181,7 +180,7 @@ upturn<-upturn[,c(mevs):=.SD*sen,.SDcols = mevs] # One needs to read scenario da
 downturn<-downturn[,c(mevs):=.SD*0.95,.SDcols = mevs] # One needs to read scenario data from csv or excel, for now creating dummy data
 ```
 
-## scenario results
+## Scenario results
 ```
 model=c(  "DR ~ad_hot_occ +avg_oil_pri_barr ","DR ~ad_hot_occ ")
 call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn')) # this will generate per model scenario results as well as some charts, if you dont procide scenario names,it will name the scenarios as scenario_1, scenario_2 etc
