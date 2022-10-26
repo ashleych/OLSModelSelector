@@ -34,13 +34,13 @@ call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','d
 model=c(  "DR ~ad_hot_occ +avg_oil_pri_barr ","DR ~ad_hot_occ ")
 call_excel(model,scenarios=list(upturn,downturn),scenario_names=list('upturn','downturn'),scenario_colors=c('green','red')) # provision for coresponding colors for each scenario, this is to avoid R allocating unintuitive colours to scenarios (eg green to downturn)
 # please note in this the baseline is assumed to be the the details already in forecast_df, this by default is shaded gray. So to avoid confusion do not provide gray as an input colour
-# If you need more colours, run colors() to see the list of all colors in R, ensure the strings are from that list. 
-##TODO: to do a validation check for color validity
+ If you need more colours, run colors() to see the list of all colors in R, ensure the strings are from that list. 
+TODO: to do a validation check for color validity
 
-## Sensitivity analysis
-# No need to provide scenarios as such here, which is just shown for comprehensiveness. Sensitivity analsys can be done without Sccenario analysis and vice versa
-# user has to provide the list of MEVs that are to be sensitised in the format below
-# the user has to provide the sensitivity value, and the system will do the upturn and downturn using that. F
-# for eg, if user provides a value of 0.1, then the tool will multiply that baseline MEV from forecast_df by 1.1 and also by 0.9
+ Sensitivity analysis
+ No need to provide scenarios as such here, which is just shown for comprehensiveness. Sensitivity analsys can be done without Sccenario analysis and vice versa
+ user has to provide the list of MEVs that are to be sensitised in the format below
+ the user has to provide the sensitivity value, and the system will do the upturn and downturn using that. F
+ for eg, if user provides a value of 0.1, then the tool will multiply that baseline MEV from forecast_df by 1.1 and also by 0.9
 call_excel(model,scenarios=list(upturn,downturn),sensitivity=c(ad_hot_occ=0.05,avg_oil_pri_barr=0.07))
-##TODo: Graphs for sensitiviuty
+TODo: Graphs for sensitiviuty
