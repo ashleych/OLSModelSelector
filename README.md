@@ -235,6 +235,7 @@ models<- c("dr ~ dr_lag_1+ cp_inflation_end_of_period_consumer_prices_percent_ch
 call_excel(models)
 ```
 [](inst/image/AR_example.png)
+<img src="inst/image/AR_example.png" width="128"/>
 ### Installation issues on Windows especially
 Try running this in case it fails to install because of warnings
 ```
