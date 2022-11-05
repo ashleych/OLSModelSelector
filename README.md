@@ -222,7 +222,19 @@ No need to provide scenarios as such here, which is just shown for comprehensive
 call_excel(model,sensitivity=c(ad_hot_occ=0.05,avg_oil_pri_barr=0.07))
 
 ```
- 
+### Treatment for autoregressive models
+In autoregressive models, the predictions need to be handled differently after the point where the actual default rates are not available (i.e the auto regressive component which is an 'independent variable' is predicted. For this the user just needs to indicate which is the dependent variable, the auto regressive variable name, the number of lags (usually 1), as well as the index number till which the actual DRs are available (its usually the sum of nrow(train_df) + nrow(test_df)). In the example below manually selected as 48.
+
+```
+validationSampler(macrodata,1:42,43:46,1:73)
+rm(configDynamic_Df)
+configDynamic("dr","dr_lag_1",1,48)
+models<- c("dr ~ dr_lag_1+ cp_inflation_end_of_period_consumer_prices_percent_change") # pls ensure these variables exist in the macrodate
+#dr_lag_1 is assumed to exist, else it can be created as macrodata[,dr_lag_1:=shift(dr)]
+
+call_excel(models)
+```
+[](inst/image/AR_example.png)
 ### Installation issues on Windows especially
 Try running this in case it fails to install because of warnings
 ```
