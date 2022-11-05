@@ -216,6 +216,26 @@ reporter <-
       }
     }
     
+
+    if (exists("transformConfig", envir = .GlobalEnv)) {
+      orderList <- transformConfigCheck(model_LHS)
+      print("orderList")
+      
+      print(orderList)
+      
+      print(paste0("LHs is",model_LHS))
+      baseVar='DR'
+      transformedObj <- transformClass(baseData = as.vector(unlist(forecast_df[,..baseVar])))
+      print(str(transformedObj))
+      transformedObj <- SettransformOrder(transformedObj, orderList)
+      
+      transformedObj<- transform(transformedObj)
+      print(str(transformedObj))
+      transformedObj <- untransform(transformedObj,report_predicted_df$predicted_values)
+      print(str(transformedObj))
+      
+      report_predicted_df$predicted_values_transformed<-transformedObj@inputData
+    }
     report_details <-
       list(
         model,

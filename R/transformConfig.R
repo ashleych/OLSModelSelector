@@ -12,8 +12,8 @@ transformConfigCheck <- function(var) {
   setDT(transformConfig)
   stopifnot(var %in% unique(transformConfig$varName))
   orderList <- transformConfig[varName == var, ]
-  stopifnot(unique(config$baseVarName) %in% colnames(macrodata))
-  stopifnot(unique(config$varName) %in% colnames(macrodata))
+  # stopifnot(unique(transformConfig$baseVarName) %in% colnames(macrodata))
+  # stopifnot(unique(transformConfig$varName) %in% colnames(macrodata))
   return(orderList)
 }
 
