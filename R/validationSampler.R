@@ -67,17 +67,17 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
   if (!all(macrometa$Variable %in% colnames(macrodata))) {
     stop("Variable listed in Macrometa data is not available in macrodata")
   }
-
+  
   if (!all(colnames(macrometa) %in% c("Variable", "Type"))) {
     stop("Macrometa should contain columns Variable and Type")
   }
-
+  
   if (!all(unique(macrometa$Type) %in% c(1, -1))) {
     stop(
       "Type in macrometa should contain directions as -1 or 1. In case you dont want variables to be tested for sign, do not include it in the macrometa file"
     )
   }
-
+  
   if (!is.character(macrodata$Date)) {
     stop("Macrodata should contain Date as a character field and in dmy format eg. 31/12/2018")
   }
@@ -87,21 +87,21 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
       cat("Date in macrodata should be in dmy format eg. 31/12/2018")
     }
   )
-
+  
   LHS_all <- paste0(LHS_vars," ~ ")
-
+  
   if (multiple== TRUE){len= 1} else {len=no_of_vars} # if multiple models are not needed, and we want to see a model with just the LHS and RHS
   RHS_all<-  unlist(sapply(len:no_of_vars, function(x) {
     unlist(combn(RHS_vars,x,simplify = FALSE, FUN=paste0,collapse="+"))
   }))
-
+  
   allFormulae<-unlist(lapply(LHS_all, function(x) {paste0(x,RHS_all)}))
-
+  
   allModelObjects <- lapply(allFormulae,
-                             function(x) lm(as.formula(x), data = trainData)
+                            function(x) lm(as.formula(x), data = trainData)
   )
   names(allModelObjects)<- allFormulae
-
+  
   return(allModelObjects)
 }
 

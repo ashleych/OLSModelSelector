@@ -216,26 +216,42 @@ reporter <-
       }
     }
     
-
+    # Untransform Logic ----------------
     if (exists("transformConfig", envir = .GlobalEnv)) {
       orderList <- transformConfigCheck(model_LHS)
       print("orderList")
       
       print(orderList)
       
-      print(paste0("LHs is",model_LHS))
-      baseVar='DR'
-      transformedObj <- transformClass(baseData = as.vector(unlist(forecast_df[,..baseVar])))
+      print(paste0("LHS is",model_LHS))
+      baseVar <- unlist(orderList[,unique(baseVarName)]) 
+      print("baseVar")
+      print(baseVar)
+      baseData <- as.vector(unlist(forecast_df[,..baseVar]))
+      transformedObj <- transformClass(baseData = baseData)
+      
       print(str(transformedObj))
       transformedObj <- SettransformOrder(transformedObj, orderList)
       
-      transformedObj<- transform(transformedObj)
+      transformedObj <- transform(transformedObj)
       print(str(transformedObj))
-      transformedObj <- untransform(transformedObj,report_predicted_df$predicted_values)
+      
+      # check how many of the predicted variables need to be removed
+      # This has to be done cos in the case of differencing, usually the first N values need to be removed
+      # 
+      no_of_elements_to_be_removed <- orderList[type == 'difference',lag *differences]
+      
+      values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed+1): length(report_predicted_df$predicted_values)]
+      transformedObj <- untransform(transformedObj,values_to_be_untransformed)
       print(str(transformedObj))
       
       report_predicted_df$predicted_values_transformed<-transformedObj@inputData
+      report_predicted_df[,(baseVar) := baseData]
+      comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
+      #tell the plotting function what the untransofrmed response variable typically this is the observed Default rate
     }
+    
+    # Full Report consolidation -------------
     report_details <-
       list(
         model,

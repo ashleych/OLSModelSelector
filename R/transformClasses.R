@@ -6,8 +6,8 @@ setGeneric(name="transform",
            {standardGeneric("transform")})
 
 
-setGeneric(name="untransform",
-           def=function(theObject,x)
+setGeneric(name = "untransform",
+           def = function(theObject,x)
            {standardGeneric("untransform")})
 
 differenceClass <- setClass(
@@ -24,37 +24,28 @@ differenceClass <- setClass(
 )
 
 
-# difference_f ------------------------------------------------------------
+#difference_f 
 
-setGeneric(
-  name = "difference_f",
-  def = function(theObject)
-  {
-    standardGeneric("difference_f")
-  }
-)
-
-setMethod(
-  f = 'difference_f',
-  signature = 'differenceClass',
-  definition = function(theObject) {
-    theObject@differenceData - shift(theObject@differenceData,
-                                     n = theObject@shift,
-                                     type = 'lag')
-  }
-)
+# setGeneric(
+#   name = "difference_f",
+#   def = function(theObject)
+#   {
+#     standardGeneric("difference_f")
+#   }
+# )
+# 
+# setMethod(
+#   f = 'difference_f',
+#   signature = 'differenceClass',
+#   definition = function(theObject) {
+#     theObject@differenceData - shift(theObject@differenceData,
+#                                      n = theObject@shift,
+#                                      type = 'lag')
+#   }
+# )
 
 # undifference_f ----------------------------------------------------------
 
-setMethod(
-  f = 'untransform',
-  signature = 'differenceClass',
-  definition = function(theObject,x) {
-    theObject@undifferenceData <-
-      diffinv(x,differences = theObject@differenceOrder,lag = theObject@lag,xi=theObject@startData)
-    return(theObject)
-  }
-)
 
 setMethod(
   f = 'transform',
@@ -62,8 +53,18 @@ setMethod(
   definition = function(theObject) {
     #browser()
     theObject@differenceData <-
-      diff(theObject@inputData, lag = theObject@lag)
-    theObject@startData <- theObject@inputData[1:theObject@lag]
+      diff(theObject@inputData, lag = theObject@lag, differences=theObject@differenceOrder)
+    theObject@startData <- theObject@inputData[1:(theObject@lag * theObject@differenceOrder)]
+    return(theObject)
+  }
+)
+
+setMethod(
+  f = 'untransform',
+  signature = 'differenceClass',
+  definition = function(theObject,x) {
+    theObject@undifferenceData <-
+      diffinv(x,differences = theObject@differenceOrder,lag = theObject@lag,xi=theObject@startData)
     return(theObject)
   }
 )
@@ -233,7 +234,7 @@ setMethod(
       transformation <- slot(theObject, paste0("transform_order_", i))
       if (transformation@type == "logit") {
         # theObject@logitObject <- logitClass(inputData = theObject@inputData)
-        theObject@logitObject@inputData <-theObject@inputData
+        theObject@logitObject@inputData <- theObject@inputData
         theObject@logitObject <- untransform(theObject@logitObject,theObject@inputData)
         theObject@inputData <- theObject@logitObject@unlogitData
       }
