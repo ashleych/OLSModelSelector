@@ -71,11 +71,41 @@ reporter <-
     report_pred_plot <-
       selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated)
     
+    # Untransform Logic ----------------
+    if (exists("transformConfig", envir = .GlobalEnv)) {
+      orderList <- transformConfigCheck(model_LHS)
+
+      
+      print(paste0("LHS is",model_LHS))
+      baseVar <- unlist(orderList[,unique(baseVarName)]) 
+
+      baseData <- as.vector(unlist(forecast_df[,..baseVar]))
+      transformedObj <- transformClass(baseData = baseData)
+      
+      transformedObj <- SettransformOrder(transformedObj, orderList)
+      
+      transformedObj <- transform(transformedObj)
+
+      # check how many of the predicted variables need to be removed
+      # This has to be done cos in the case of differencing, usually the first N values need to be removed
+      # 
+      no_of_elements_to_be_removed <- orderList[type == 'difference',lag *differences]
+      
+      values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed+1): length(report_predicted_df$predicted_values)]
+      transformedObj <- untransform(transformedObj,values_to_be_untransformed)
+      print(str(transformedObj))
+      
+      report_predicted_df$predicted_values_transformed<-transformedObj@inputData
+      report_predicted_df[,(baseVar) := baseData]
+      comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
+      #tell the plotting function what the untransofrmed response variable typically this is the observed Default rate
+    }
+    browser()
     # start of scenario forecasts and charts--------------------------------
     selectedModelScenariosCharts <- list()
     scenario_list <- c()
     scenarioMEVCharts <- c()
-    ModelSensitivities_df_list<-c()
+    ModelSensitivities_df_list <- c()
     if (length(scenarios) > 0) {
       scenario_list = c()
       for (i in 1:length(scenarios)) {
@@ -89,7 +119,16 @@ reporter <-
             selectedModelObject,
             allModelEvaluated,
             scenario_input_df = s@scenario_input
-          )
+          ) # this is a dataframe with cols such as  Date  DR_logit_FD, avg_oil_pri_barrel_lag_3 predicted_values
+        if (exists("transformConfig", envir = .GlobalEnv)) {
+          if (exists("transformedObj")) {
+            transformedObj <- untransform(transformedObj,scenario_result$predicted_values[(no_of_elements_to_be_removed+1): length(scenario_result$predicted_values)])
+            scenario_result$predicted_values_transformed <- transformedObj@inputData
+            scenario_result[,(baseVar) := baseData]
+            comment(scenario_result) <- baseVar
+          }
+        }
+          
         s@predictions = scenario_result
         scenario_list <- c(scenario_list, s)
       }
@@ -187,69 +226,36 @@ reporter <-
       
     }
     
-    if (exists("transformConfig_Df", envir = .GlobalEnv)) {
-      transformRule <-
-        transformConfig_Df[depVar == model_LHS,]$transformRule
-      
-      div100 = function(x) {
-        return(x / 100)
-      }
-      
-      if (length(transformRule) > 0) {
-        rules <- trimws(unlist(strsplit(transformRule, "[;]")))
-        # untransform logic for divided by 100 which is used in Riyad bank. THis should move into a separate utility function of its own
-        
-        
-        report_predicted_df$predicted_values_transformed <-
-          report_predicted_df$predicted_values
-        
-        for (i in 1:length(report_predicted_df$predicted_values)) {
-          for (rule in rules) {
-            report_predicted_df$predicted_values_transformed[i] <-
-              do.call(rule,
-                      list(
-                        report_predicted_df$predicted_values_transformed[i]
-                      ))
-          }
-          
-        }
-      }
-    }
+    # if (exists("transformConfig_Df", envir = .GlobalEnv)) {
+    #   transformRule <-
+    #     transformConfig_Df[depVar == model_LHS,]$transformRule
+    #   
+    #   div100 = function(x) {
+    #     return(x / 100)
+    #   }
+    #   
+    #   if (length(transformRule) > 0) {
+    #     rules <- trimws(unlist(strsplit(transformRule, "[;]")))
+    #     # untransform logic for divided by 100 which is used in Riyad bank. THis should move into a separate utility function of its own
+    #     
+    #     
+    #     report_predicted_df$predicted_values_transformed <-
+    #       report_predicted_df$predicted_values
+    #     
+    #     for (i in 1:length(report_predicted_df$predicted_values)) {
+    #       for (rule in rules) {
+    #         report_predicted_df$predicted_values_transformed[i] <-
+    #           do.call(rule,
+    #                   list(
+    #                     report_predicted_df$predicted_values_transformed[i]
+    #                   ))
+    #       }
+    #       
+    #     }
+    #   }
+    # }
     
-    # Untransform Logic ----------------
-    if (exists("transformConfig", envir = .GlobalEnv)) {
-      orderList <- transformConfigCheck(model_LHS)
-      print("orderList")
-      
-      print(orderList)
-      
-      print(paste0("LHS is",model_LHS))
-      baseVar <- unlist(orderList[,unique(baseVarName)]) 
-      print("baseVar")
-      print(baseVar)
-      baseData <- as.vector(unlist(forecast_df[,..baseVar]))
-      transformedObj <- transformClass(baseData = baseData)
-      
-      print(str(transformedObj))
-      transformedObj <- SettransformOrder(transformedObj, orderList)
-      
-      transformedObj <- transform(transformedObj)
-      print(str(transformedObj))
-      
-      # check how many of the predicted variables need to be removed
-      # This has to be done cos in the case of differencing, usually the first N values need to be removed
-      # 
-      no_of_elements_to_be_removed <- orderList[type == 'difference',lag *differences]
-      
-      values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed+1): length(report_predicted_df$predicted_values)]
-      transformedObj <- untransform(transformedObj,values_to_be_untransformed)
-      print(str(transformedObj))
-      
-      report_predicted_df$predicted_values_transformed<-transformedObj@inputData
-      report_predicted_df[,(baseVar) := baseData]
-      comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
-      #tell the plotting function what the untransofrmed response variable typically this is the observed Default rate
-    }
+
     
     # Full Report consolidation -------------
     report_details <-

@@ -177,12 +177,11 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
 selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,mevs,...) {
   # input_list <- as.list(substitute(list(...)))
   input_arg_list <- list(...)
-  
   setDT(baseline_predictions)
   baseline_predictions[,scenario:='baseline']
 
   make_long_format<-function(x){
-    x@predictions[,scenario:=x@scenario_name]
+    x@predictions <- x@predictions[,scenario:=x@scenario_name]
     return(x@predictions)
   }
   all_scenarios_list<-lapply(scenariosList,make_long_format)
@@ -191,17 +190,17 @@ selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,
   plot_data<-rbindlist(all_scenarios_list)
   plot_data<-rbindlist(list(plot_data,baseline_predictions))
   # plot_data<-melt(all_scenarios_list,id.vars ='Date', measure.vars=mevs, variable.name = 'scenario',value.name = 'scenario_values')
-  plotList=list()
+  plotList =list()
   for (mev in mevs) {
-    plot_cols<-c("Date",'scenario',mev)
-    mev_col<-sym(mev)
+    plot_cols <-c("Date",'scenario',mev)
+    mev_col <-sym(mev)
     if ("scenario_colors" %in% names(input_arg_list)) {
       scenario_colors <- c(input_arg_list$scenario_colors,'gray')
-      colors<- c('green','blue','red')
+      colors <- c('green','blue','red')
       names(scenario_colors) <- c(all_scenario_names,'baseline')
-      p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) + scale_colour_manual(values=scenario_colors)+ geom_line()  + xlab("Time") +ggtitle(paste0("Macrovariables across scenarios -",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+      p <- ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) + scale_colour_manual(values=scenario_colors)+ geom_line()  + xlab("Time") +ggtitle(paste0("Macrovariables across scenarios -",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
     } else {
-      p<-ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) +  geom_line() + xlab("Time") + ggtitle(paste0("Macrovariables across scenarios - ",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
+      p <- ggplot(plot_data,aes(x = lubridate::dmy(Date),y = !!mev_col,color = scenario)) +  geom_line() + xlab("Time") + ggtitle(paste0("Macrovariables across scenarios - ",mev)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
     }
     plotList <- append(plotList,list(p))
     
