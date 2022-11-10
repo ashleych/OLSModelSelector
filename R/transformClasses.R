@@ -145,7 +145,8 @@ transformClass <- setClass(
     transform_order_3 = 'transformOrderClass',
     transform_order_4 = 'transformOrderClass',
     tranformCount = 'numeric',
-    transform_flag = 'logical'
+    transform_flag = 'logical',
+    no_of_elements_to_be_removed_for_untransform='numeric'
   )
 )
 

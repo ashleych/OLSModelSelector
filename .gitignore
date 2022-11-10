@@ -8,3 +8,5 @@ figure
 inst/Others/Experimental/
 .xlsx
 *.~lock.*
+tests/testthat/*.xlsx
+tests/testthat/*.pdf

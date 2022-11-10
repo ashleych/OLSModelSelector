@@ -312,7 +312,7 @@ sheetCreator <- function(model,file.name, sheetName,...) {
   ## Scenario MEV Plots -----------------------------------------------
   # plot_grid<-do.call("grid.arrange", c(plotList, ncol=2))
   # print(excelDetails$scenarioMEVCharts)
-  plot_grid<-do.call("grid.arrange", c(excelDetails$scenarioMEVCharts, ncol=2))
+  plot_grid <- do.call("grid.arrange", c(excelDetails$scenarioMEVCharts, ncol=2))
   
   insertPlot(wb, sheetName, width = 20, height = 10, xy = NULL, startRow = endRowScenarioPredictions + 30,
              startCol = 10, fileType = "png", units = "in", dpi = 300)

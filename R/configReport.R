@@ -72,15 +72,16 @@ reporter <-
       selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated)
     
     # Untransform Logic ----------------
+    transformedObj <- NA
     if (exists("transformConfig", envir = .GlobalEnv)) {
       orderList <- transformConfigCheck(model_LHS)
 
+      no_of_elements_to_be_removed_for_untransform <- orderList[type == 'difference',lag * differences]
       
-      print(paste0("LHS is",model_LHS))
       baseVar <- unlist(orderList[,unique(baseVarName)]) 
 
       baseData <- as.vector(unlist(forecast_df[,..baseVar]))
-      transformedObj <- transformClass(baseData = baseData)
+      transformedObj <- transformClass(baseData = baseData,no_of_elements_to_be_removed_for_untransform=no_of_elements_to_be_removed_for_untransform)
       
       transformedObj <- SettransformOrder(transformedObj, orderList)
       
@@ -89,18 +90,16 @@ reporter <-
       # check how many of the predicted variables need to be removed
       # This has to be done cos in the case of differencing, usually the first N values need to be removed
       # 
-      no_of_elements_to_be_removed <- orderList[type == 'difference',lag *differences]
       
-      values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed+1): length(report_predicted_df$predicted_values)]
+      values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed_for_untransform+1): length(report_predicted_df$predicted_values)]
       transformedObj <- untransform(transformedObj,values_to_be_untransformed)
       print(str(transformedObj))
       
       report_predicted_df$predicted_values_transformed<-transformedObj@inputData
       report_predicted_df[,(baseVar) := baseData]
       comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
-      #tell the plotting function what the untransofrmed response variable typically this is the observed Default rate
+      #tell the plotting function what the untransformed response variable typically this is the observed Default rate
     }
-    browser()
     # start of scenario forecasts and charts--------------------------------
     selectedModelScenariosCharts <- list()
     scenario_list <- c()
@@ -122,7 +121,7 @@ reporter <-
           ) # this is a dataframe with cols such as  Date  DR_logit_FD, avg_oil_pri_barrel_lag_3 predicted_values
         if (exists("transformConfig", envir = .GlobalEnv)) {
           if (exists("transformedObj")) {
-            transformedObj <- untransform(transformedObj,scenario_result$predicted_values[(no_of_elements_to_be_removed+1): length(scenario_result$predicted_values)])
+            transformedObj <- untransform(transformedObj,scenario_result$predicted_values[(no_of_elements_to_be_removed_for_untransform+1): length(scenario_result$predicted_values)])
             scenario_result$predicted_values_transformed <- transformedObj@inputData
             scenario_result[,(baseVar) := baseData]
             comment(scenario_result) <- baseVar
@@ -158,15 +157,17 @@ reporter <-
     
     # end of scenario forecasts and charts--------------------------------
     
-    ## start of model sensitivity analyser------------------------------
+    #start of model sensitivity analyser------------------------------
     if (length(sensitivity) > 0) {
       ModelSensitivities_df_list <-
         ModelSensitiser(
-          selectedModel,
-          selectedModelObject,
-          copy(report_predicted_df),
-          sensitivity,
-          model_RHS
+          selectedModel=selectedModel,
+          selectedModelObject=selectedModelObject,
+          predicted_df=copy(report_predicted_df),
+          forecast_df = forecast_df,
+          sensitivity=sensitivity,
+          rhs=model_RHS,
+          transformedObj=transformedObj
         )
       
     }
@@ -174,7 +175,7 @@ reporter <-
     
     
     
-    ## end of model sensitivity analyser------------------------------
+    # end of model sensitivity analyser------------------------------
     
     dynamic <- dynamicCheck(selectedModel)
     

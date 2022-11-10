@@ -118,27 +118,28 @@ selectedModelScenariosCharter <- function(scenariosList,baseline_predictions,...
 #' @examples
 #' ModelSensitiser(selectedModel,allModelEvaluated)
 
-ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensitivity,rhs,...){
+ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensitivity,rhs,forecast_df,...){
 
   used_vars <- trimws(unlist(strsplit(selectedModel,"[+,~]")))
-  keep_vars<- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up")
   if(length(sensitivity)==0){
     for(r in rhs){
       sensitivity[r]=0.05
     }
   }
-  # for(r in names(rhs)){
-  #   if(is.na(sensitivity[r])){
-  #     sensitivity[r]=0.05
-  #   }
-  # }
-  # 
+
   input_arg_list <- list(...)
+  if ("transformedObj" %in% names(input_arg_list)) {
+    transformedObj <- input_arg_list$transformedObj
+  }
+  if (!is.na(transformedObj))
+  {
+    keep_vars<- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up") 
+  } else {
+  }
   mev_sensitivity_df_list=list()
   mevs_sensitivity= sensitivity[names(sensitivity) %in% rhs] # use the sensitivity for ones that are present in the model
   for(mev in names(mevs_sensitivity)){
     #allModelEvaluated is not needed, to remove from this function as well as charter
-    
     ### Upwards sensitivity
     sensitivity_input <-copy(predicted_df)
     predicted_base<-sensitivity_input$predicted_values
@@ -146,6 +147,7 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
     s =sensitivity[mev]
     sensitivity_input[,c(mev):=.SD*(1+s),.SDcols = mev]
     predicted_up <- predict(selectedModelObject,newdata = sensitivity_input)
+
     input_up<-sensitivity_input[[mev]]
     
     ### Downwards sensitivity
@@ -154,8 +156,31 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
     s =sensitivity[mev]
     sensitivity_input[,c(mev):=.SD*(1-s),.SDcols = mev]
     predicted_down <- predict(selectedModelObject,newdata = sensitivity_input)
+    # if (!is.na(transformedObj)){
+    #   predicted_transformed_down_obj <- untransform(transformedObj,predicted_up)
+    #   predicted_transformed_down <-predicted_transformed_down_obj@inputData
+    # } 
     input_down<-sensitivity_input[[mev]]
-    overall_mev_sensitivity <- data.table(cbind(forecast_df,input_down,input_up,predicted_base,predicted_down,predicted_up))[,..keep_vars]
+    browser()
+    
+    if (!is.na(transformedObj)){
+      # number_of_elements_to_be_removed<-(transformedObj@differenceOrder * transformedObj@lag)
+      no_of_elements_to_be_removed_for_untransform <- transformedObj@no_of_elements_to_be_removed_for_untransform
+      total_length=length(predicted_up) #predicted_up, predicted_down etc expected to have same length
+      predicted_transformed_up <- untransform(transformedObj,predicted_up[(no_of_elements_to_be_removed_for_untransform+1):total_length])@inputData
+      predicted_transformed_down <-untransform(transformedObj,predicted_down[(no_of_elements_to_be_removed_for_untransform+1):total_length])@inputData
+      predicted_transformed_base <- untransform(transformedObj,predicted_base[(no_of_elements_to_be_removed_for_untransform+1):total_length])@inputData
+      keep_vars <- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up","predicted_transformed_base","predicted_transformed_down","predicted_transformed_up") 
+      browser()
+      stopifnot(dim(forecast_df)[1]==length(predicted_transformed_up))
+      overall_mev_sensitivity <- data.table(cbind(forecast_df,input_down,input_up,predicted_base,predicted_down,predicted_up,predicted_transformed_base,predicted_transformed_down,predicted_transformed_up))[,..keep_vars]
+    } else {
+      keep_vars <- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up") 
+      
+      overall_mev_sensitivity <- data.table(cbind(forecast_df,input_down,input_up,predicted_base,predicted_down,predicted_up))[,..keep_vars]
+      
+      
+    }
     comment(overall_mev_sensitivity)<-mev
     mev_sensitivity_df_list <-c(mev_sensitivity_df_list,list(overall_mev_sensitivity))
   }
@@ -187,8 +212,8 @@ selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,
   all_scenarios_list<-lapply(scenariosList,make_long_format)
   all_scenario_names<- lapply(scenariosList,function(x) x@scenario_name)
 
-  plot_data<-rbindlist(all_scenarios_list)
-  plot_data<-rbindlist(list(plot_data,baseline_predictions))
+  plot_data <-rbindlist(all_scenarios_list)
+  plot_data <-rbindlist(list(plot_data,baseline_predictions))
   # plot_data<-melt(all_scenarios_list,id.vars ='Date', measure.vars=mevs, variable.name = 'scenario',value.name = 'scenario_values')
   plotList =list()
   for (mev in mevs) {
