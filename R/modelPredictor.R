@@ -131,11 +131,11 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
   if ("transformedObj" %in% names(input_arg_list)) {
     transformedObj <- input_arg_list$transformedObj
   }
-  if (!is.na(transformedObj))
-  {
-    keep_vars<- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up") 
-  } else {
-  }
+  # if (!is.na(transformedObj))
+  # {
+  #   keep_vars<- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up") 
+  # } else {
+  # }
   mev_sensitivity_df_list=list()
   mevs_sensitivity= sensitivity[names(sensitivity) %in% rhs] # use the sensitivity for ones that are present in the model
   for(mev in names(mevs_sensitivity)){
@@ -156,14 +156,11 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
     s =sensitivity[mev]
     sensitivity_input[,c(mev):=.SD*(1-s),.SDcols = mev]
     predicted_down <- predict(selectedModelObject,newdata = sensitivity_input)
-    # if (!is.na(transformedObj)){
-    #   predicted_transformed_down_obj <- untransform(transformedObj,predicted_up)
-    #   predicted_transformed_down <-predicted_transformed_down_obj@inputData
-    # } 
+
     input_down<-sensitivity_input[[mev]]
-    browser()
     
-    if (!is.na(transformedObj)){
+    ### untransform
+    if (isS4(transformedObj)){
       # number_of_elements_to_be_removed<-(transformedObj@differenceOrder * transformedObj@lag)
       no_of_elements_to_be_removed_for_untransform <- transformedObj@no_of_elements_to_be_removed_for_untransform
       total_length=length(predicted_up) #predicted_up, predicted_down etc expected to have same length
@@ -171,7 +168,6 @@ ModelSensitiser <- function(selectedModel,selectedModelObject,predicted_df,sensi
       predicted_transformed_down <-untransform(transformedObj,predicted_down[(no_of_elements_to_be_removed_for_untransform+1):total_length])@inputData
       predicted_transformed_base <- untransform(transformedObj,predicted_base[(no_of_elements_to_be_removed_for_untransform+1):total_length])@inputData
       keep_vars <- c("Date",used_vars,"predicted_base","input_down","input_up","predicted_down","predicted_up","predicted_transformed_base","predicted_transformed_down","predicted_transformed_up") 
-      browser()
       stopifnot(dim(forecast_df)[1]==length(predicted_transformed_up))
       overall_mev_sensitivity <- data.table(cbind(forecast_df,input_down,input_up,predicted_base,predicted_down,predicted_up,predicted_transformed_base,predicted_transformed_down,predicted_transformed_up))[,..keep_vars]
     } else {

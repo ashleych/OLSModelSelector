@@ -85,9 +85,16 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
   if (report_type=='html'){
   return(list(estimates_kable=estimates_kable,otherStats_kable=otherStats_kable))
   }
-  if (report_type=='excel'){
+
+    if (report_type=='excel'){
     return(list(estimates_excel = chosenModelResults.melt, otherStats_excel =
                   otherStats_df))
   }
+  
+    if (report_type=='unformatted'){
+      return(list(estimates_excel = chosenModelResults.melt, otherStats_excel =
+                    otherStats_df))
+    }
+  
 
 }

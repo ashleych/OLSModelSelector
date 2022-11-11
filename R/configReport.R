@@ -53,6 +53,7 @@ reporter <-
       allModelEvaluated$model
     
     selectedModelObject <- allModels[[selectedModel]]
+    browser()
     report_summary <-
       selectedModelRegressionResults(
         selectedModel,
@@ -61,7 +62,6 @@ reporter <-
         pvalue_threshold = 0.05,
         report_type = report_type
       )
-    
     report_selectedModelDiagnostics <-
       selectedModelDiagnostics(selectedModel, allModelEvaluated, report_type = report_type)
     

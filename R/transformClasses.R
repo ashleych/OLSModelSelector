@@ -51,7 +51,6 @@ setMethod(
   f = 'transform',
   signature = 'differenceClass',
   definition = function(theObject) {
-    #browser()
     theObject@differenceData <-
       diff(theObject@inputData, lag = theObject@lag, differences=theObject@differenceOrder)
     theObject@startData <- theObject@inputData[1:(theObject@lag * theObject@differenceOrder)]

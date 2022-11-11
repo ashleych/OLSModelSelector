@@ -23,7 +23,6 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type
   # select all stats and pvalues that is to be displayed.
   stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf","KPSS","bg"),c("_pvalue","_statistic","_results")))
   chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = stats][, rn := .I]
-
   chosenModelResults.melt <-melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "_")][,dcast(.SD, stub ~ var)]
 
   #Creiteris for Display
@@ -38,7 +37,6 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type
   chosenModelResults_informative <- Criteria[chosenModelResults.melt,on="stub"]
   chosenModelResults_informative[, FINAL:=ifelse(Pass == results, "PASS", "FAIL")]
   chosenModelResults_pretty<-chosenModelResults_informative[,c('Check','Test','statistic','pvalue','Criteria','results','FINAL')]
-
 
   if (report_type =='html') {
     return(
@@ -62,7 +60,9 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type
     return(chosenModelResults_pretty)
   }
 
-
+  if (report_type == 'unformatted') {
+    return(chosenModelResults_pretty)
+  }
 
 }
 
