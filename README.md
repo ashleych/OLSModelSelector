@@ -177,13 +177,14 @@ downturn=copy(macrodata)
 sen=1.05 #mult factor  to be applied to generate upturn and downturn
 
 mevs<-colnames(macrodata)[!colnames(macrodata) %in% "Date"] #identofy all the MEV columns
-
+mevs<-mevs[!grepl('DR',mevs)] # remove any DR like columns
 upturn<-upturn[,c(mevs):=.SD*sen,.SDcols = mevs] # One needs to read scenario data from csv or excel. for now creating dummy data
 
 downturn<-downturn[,c(mevs):=.SD*0.95,.SDcols = mevs] # One needs to read scenario data from csv or excel, for now creating dummy data
 ```
 
 ## Scenario results
+Pass on the various datasets for scenarios, essentially it should have the same columns as macrodata
 this will generate per model scenario results as well as some charts, if you dont provide scenario names,it will name the scenarios as scenario_1, scenario_2 etc
 ```
 model=c(  "DR ~ad_hot_occ +avg_oil_pri_barr ","DR ~ad_hot_occ ")
