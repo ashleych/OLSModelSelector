@@ -22,7 +22,9 @@ selectedModelDiagnostics <- function(selectedModel,allModelEvaluated,report_type
 
   # select all stats and pvalues that is to be displayed.
   stats <- do.call(paste0,CJ(c("BP","dw","shapiro","adf","KPSS","bg"),c("_pvalue","_statistic","_results")))
-  chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = stats][, rn := .I]
+  
+
+  chosenModelResults.stats <- chosenModelResults[, lapply(.SD,as.character), .SDcols = stats][, rn := .I]
   chosenModelResults.melt <-melt(chosenModelResults.stats,'rn')[, c('stub', 'var') := tstrsplit(variable, "_")][,dcast(.SD, stub ~ var)]
 
   #Creiteris for Display

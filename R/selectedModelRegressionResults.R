@@ -31,7 +31,7 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
   stats <- do.call(paste0,CJ( c("se.","t.","p."),used_vars_intercept))
   vif_stats<- paste0("VIF.",used_vars)
   keep_cols<- c(stats,vif_stats,paste0("Estimates.",used_vars_intercept))
-  chosenModelResults.stats <- chosenModelResults[, .SD, .SDcols = keep_cols][, rn := .I]
+  chosenModelResults.stats <- chosenModelResults[, lapply(.SD,as.character), .SDcols = keep_cols][, rn := .I]
 
   chosenModelResults.melt <- melt(chosenModelResults.stats,
                                   "rn")
@@ -45,7 +45,7 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
 
   lookup <- direction_config$Type
   names(lookup) <- direction_config$Variable
-  chosenModelResults.melt$sign <- sign(chosenModelResults.melt$Estimates)
+  chosenModelResults.melt$sign <- sign(as.numeric(chosenModelResults.melt$Estimates))
   chosenModelResults.melt$lookedup <- lookup[chosenModelResults.melt$var]
   chosenModelResults.melt[var != "(Intercept)",DirectionCheck:=ifelse(sign==lookedup,"PASS","FAIL")]
 

@@ -53,7 +53,6 @@ reporter <-
       allModelEvaluated$model
     
     selectedModelObject <- allModels[[selectedModel]]
-    browser()
     report_summary <-
       selectedModelRegressionResults(
         selectedModel,
@@ -93,8 +92,7 @@ reporter <-
       
       values_to_be_untransformed <- report_predicted_df$predicted_values[(no_of_elements_to_be_removed_for_untransform+1): length(report_predicted_df$predicted_values)]
       transformedObj <- untransform(transformedObj,values_to_be_untransformed)
-      print(str(transformedObj))
-      
+
       report_predicted_df$predicted_values_transformed<-transformedObj@inputData
       report_predicted_df[,(baseVar) := baseData]
       comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
