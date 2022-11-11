@@ -79,7 +79,7 @@ logitClass <- setClass(
   )
 )
 
-# logitTransform ----------------------------------------------------------
+## logitTransform ----------------------------------------------------------
 
 setMethod(f="transform",signature="logitClass",
           definition=function(theObject)
@@ -90,7 +90,7 @@ setMethod(f="transform",signature="logitClass",
           })
 
 
-# logitUntransform --------------------------------------------------------
+## logitUntransform --------------------------------------------------------
 
 setMethod(
   f = "untransform",
@@ -106,11 +106,38 @@ setMethod(
 
 
 
+# Log Class --------------------
+
+logClass <- setClass(
+  'logClass',
+  slots = list(
+    logData = 'numeric',
+    unlogData = 'numeric',
+    inputData = 'numeric'
+  )
+)
+
+## logTransform ----------------------------------------------------------
+
+setMethod(f="transform",signature="logClass",
+          definition=function(theObject)
+          { x <- theObject@inputData
+          theObject@logData <-log(x)
+          return(theObject)
+          })
 
 
+## log Untransform --------------------------------------------------------
 
-# DR_logit_FD <- logit(DR_logit_FD, DR_logit_FD@baseData)
-
+setMethod(
+  f = "untransform",
+  signature = "logClass",
+  definition = function(theObject,x)
+  {
+    theObject@unlogData <-exp(x)
+    return(theObject)
+  }
+)
 
 
 
@@ -138,6 +165,7 @@ transformClass <- setClass(
     # after each transform this holds the result of the transform, to be passed on to the next transform function
     logitObject = 'logitClass',
     differencesObject = 'differenceClass',
+    logObject='logClass',
     outputData = 'numeric',
     transform_order_1 = 'transformOrderClass',
     transform_order_2 = 'transformOrderClass',
@@ -215,6 +243,14 @@ setMethod(
         
       }
       
+      if (transformation@type == "log") {
+        theObject@logObject <- logClass(inputData = theObject@inputData)
+        theObject@logObject <- transform(theObject@logObject)
+        theObject@inputData <- theObject@logitObject@logData
+      }
+
+      
+      
     }
     return(theObject)
   }
@@ -249,6 +285,13 @@ setMethod(
         
       }
       
+      if (transformation@type == "log") {
+        # theObject@logitObject <- logitClass(inputData = theObject@inputData)
+        theObject@logObject@inputData <- theObject@inputData
+        theObject@logObject <- untransform(theObject@logObject,theObject@inputData)
+        theObject@inputData <- theObject@logObject@unlogData
+      }
+      
     }
     return(theObject)
   }
@@ -257,25 +300,3 @@ setMethod(
 
 #https://stats.stackexchange.com/questions/188595/convert-double-differenced-forecast-into-actual-value 
 
-## REwrite using diffinv
-## When predicting, depending on the number of differencing, remove the 
-
-# 
-# > diffinv(d,lag=2,differences = 2,xi=c(1,1,1,1))
-# [1] 1 1 1 1 1 1 1 1 1 1
-# > diffinv(d,lag=2,differences = 2,xi=c(1,2,3,4))
-# [1]  1  2  3  4  5  6  7  8  9 10
-# > d<-diff(s,lag=3, differences = 2)
-# > d
-# [1] 0 0 0 0
-# > d<-diff(s,lag=3, differences = 3)
-# > d
-# [1] 0
-# > d<-diff(s,lag=3, differences = 1)
-# > d
-# [1] 3 3 3 3 3 3 3
-# > diffinv(d, lag = 3, differences = 1, xi=c(1,2,3,4,5,6))
-# Error in diffinv.vector(x, lag, differences, xi) : 
-#   'xi' does not have the right length
-# > diffinv(d, lag = 3, differences = 1, xi=c(1,2,3))
-# [1]  1  2  3  4  5  6  7  8  9 10
