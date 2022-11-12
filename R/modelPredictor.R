@@ -53,12 +53,12 @@ selectedModelCharter <- function(selectedModel, selectedModelObject,allModelEval
       selectedModelForecaster(selectedModel, selectedModelObject, allModelEvaluated)
   }
 
-  ODR <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
+  y_axis_title <- trimws(unlist(strsplit(selectedModel, '[~]'))[[1]])
 
   ggplot(predicted_df, aes(lubridate::dmy(Date))) +
 
-    geom_line(aes(y = predicted_values, colour = "predicted")) +
-    geom_line(aes(y = get(ODR), colour = "DR")) + xlab("Date") + ylab("Default Rates") +
+    geom_line(aes(y = predicted_values, colour = "Predicted")) +
+    geom_line(aes(y = get(y_axis_title), colour = "Actuals")) + xlab("Date") + ylab(y_axis_title) +
     ggtitle(paste0("Model results for ", selectedModel)) + theme(plot.title = element_text(size =  8, hjust = 0.5))
 }
 

@@ -68,15 +68,18 @@ reporter <-
       selectedModelForecaster(selectedModel, selectedModelObject, allModelEvaluated)
     
     report_pred_plot <-
-      selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated)
+      selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated,report_predicted_df=report_predicted_df)
     
     # Untransform Logic ----------------
     transformedObj <- NA
     if (exists("transformConfig", envir = .GlobalEnv)) {
+      
       orderList <- transformConfigCheck(model_LHS)
 
-      no_of_elements_to_be_removed_for_untransform <- orderList[type == 'difference',lag * differences]
-      
+      no_of_elements_to_be_removed_for_untransform <- orderList[type == 'difference',lag * differences] # to check if there is any differencing within the transofrm, and to use it only for differencing operations
+      if (length(no_of_elements_to_be_removed_for_untransform)==0){
+        # this is needed as if there is no dofferncing operation, it returns and empty array and not a 0
+        no_of_elements_to_be_removed_for_untransform <- 0 }
       baseVar <- unlist(orderList[,unique(baseVarName)]) 
 
       baseData <- as.vector(unlist(forecast_df[,..baseVar]))

@@ -121,7 +121,8 @@ logClass <- setClass(
 
 setMethod(f="transform",signature="logClass",
           definition=function(theObject)
-          { x <- theObject@inputData
+          { 
+            x <- theObject@inputData
           theObject@logData <-log(x)
           return(theObject)
           })
@@ -246,7 +247,7 @@ setMethod(
       if (transformation@type == "log") {
         theObject@logObject <- logClass(inputData = theObject@inputData)
         theObject@logObject <- transform(theObject@logObject)
-        theObject@inputData <- theObject@logitObject@logData
+        theObject@inputData <- theObject@logObject@logData
       }
 
       

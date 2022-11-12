@@ -250,12 +250,12 @@ macrodata[,DR_logit := logit(DR)]
 macrodata[,DR_logit_FD := DR_logit - shift(DR_logit, n = 1, type = 'lag')]
 validationSampler(macrodata,1:29,30:33,1:48)
 transformConfig  <-  data.table(stringsAsFactors=FALSE,
-                                varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit"),
-                                baseVarName = c("DR", "DR", "DR"),
-                                order = c(1L, 2L, 1L),
-                                type = c("logit", "difference", "logit"),
-                                lag = c(0L, 1L, 0L),
-                                differences = c(0L, 1L, 0L))
+                                  varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit",'DR_log'),
+                                  baseVarName = c("DR", "DR", "DR","DR"),
+                                  order = c(1L, 2L, 1L,1L),
+                                  type = c("logit", "difference", "logit","log"),
+                                  lag = c(0L, 1L, 0L,0L),
+                                  differences = c(0L, 1L, 0L,0L))
 
 models <- c(" DR_logit_FD ~ avg_oil_pri_barrel_lag_3")
 # call_excel(models,report_title = "new_testing")
