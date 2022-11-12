@@ -91,7 +91,7 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
                   otherStats_df))
   }
   
-    if (report_type=='unformatted'){
+    if (report_type == 'unformatted'){
       return(list(estimates_excel = chosenModelResults.melt, otherStats_excel =
                     otherStats_df))
     }

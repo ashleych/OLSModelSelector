@@ -26,15 +26,15 @@ if ("scenarios" %in% names(input_args_list)) {
   } else{
     scenario_names<- paste0("scenario_",seq(length(scenarios)))
   }
-  
-} 
-if ("scenario_colors" %in% names(input_args_list)) {
-  scenario_colors <- input_args_list$scenario_colors
 
-} 
-if ('sensitivity' %in% names(input_args_list)) {
-  sensitivity<- input_args_list$sensitivity
 }
+# if ("scenario_colors" %in% names(input_args_list)) {
+#   scenario_colors <- input_args_list$scenario_colors
+# 
+# }
+# if ('sensitivity' %in% names(input_args_list)) {
+#   sensitivity<- input_args_list$sensitivity
+# }
 # Code to output and format Excel sheets ----------------------------------
   if (is.null(output_file)) {
     file.name <- make.names(paste0(report_title, Sys.time(), '.xlsx'))
@@ -52,15 +52,23 @@ if ('sensitivity' %in% names(input_args_list)) {
   dfSummaryWriter(file.name,dataFrame=summary)
 
 
+  # lapply(seq_along(model_list), function(x) {
+  #   sheetCreator(
+  #     model = model_list[[x]],
+  #     file.name = file.name,
+  #     sheetName = names(model_list[x]),
+  #     scenarios=scenarios,
+  #     scenario_names=scenario_names,
+  #     scenario_colors=scenario_colors,
+  #     sensitivity=sensitivity,...
+  #   )
+  # })
+  
   lapply(seq_along(model_list), function(x) {
     sheetCreator(
       model = model_list[[x]],
       file.name = file.name,
-      sheetName = names(model_list[x]),
-      scenarios=scenarios,
-      scenario_names=scenario_names,
-      scenario_colors=scenario_colors,
-      sensitivity=sensitivity
+      sheetName = names(model_list[x]),...
     )
   })
 
@@ -94,27 +102,28 @@ if ('sensitivity' %in% names(input_args_list)) {
 
 sheetCreator <- function(model,file.name, sheetName,...) {
   input_arg_list <- list(...)
-  if ("scenarios" %in% names(input_arg_list)) {
-    scenarios <- input_arg_list$scenarios
-    scenario_names<-input_arg_list$scenario_names
-  } else {
-    scenarios <- list()
-    scenario_names<-list()
-  }
-  
-  if ("scenario_colors" %in% names(input_arg_list) ){
-    scenario_colors <- input_arg_list$scenario_colors
-  } else {
-    scenario_colors <- list()
-  }
-  if ("sensitivity" %in% names(input_arg_list) ){
-    sensitivity <- input_arg_list$sensitivity
-  } else {
-    sensitivity <- list()
-  }
+  # if ("scenarios" %in% names(input_arg_list)) {
+  #   scenarios <- input_arg_list$scenarios
+  #   scenario_names<-input_arg_list$scenario_names
+  # } else {
+  #   scenarios <- list()
+  #   scenario_names<-list()
+  # }
+  # 
+  # if ("scenario_colors" %in% names(input_arg_list) ){
+  #   scenario_colors <- input_arg_list$scenario_colors
+  # } else {
+  #   scenario_colors <- list()
+  # }
+  # if ("sensitivity" %in% names(input_arg_list) ){
+  #   sensitivity <- input_arg_list$sensitivity
+  # } else {
+  #   sensitivity <- list()
+  # }
   # this contains all the results to be shown in the Excel file
-  excelDetails <- reporter(model,report_type = "excel",scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity)
-
+  # excelDetails <- reporter(model,report_type = "excel",scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity)
+  excelDetails <- reporter(model,report_type = "excel",...)
+  
   #check if files already exists in the current directory in which case, it loads it else it creates a new file
   if(!file.exists(file.name))
     wb = createWorkbook()

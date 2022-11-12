@@ -2,7 +2,7 @@
 # 
 # macrodata[,DR_logit := logit(DR)]
 # macrodata[,DR_logit_FD := DR_logit - shift(DR_logit, n = 1, type = 'lag')]
-# validationSampler(macrodata,1:29,30:33,1:48)
+validationSampler(macrodata,1:29,30:33,1:48)
 # transformConfig  <-  data.table(stringsAsFactors=FALSE,
 #                                 varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit"),
 #                                 baseVarName = c("DR", "DR", "DR"),
@@ -11,24 +11,8 @@
 #                                 lag = c(0L, 1L, 0L),
 #                                 differences = c(0L, 1L, 0L))
 
-transformConfig  <-  data.table(stringsAsFactors=FALSE,
-                                  varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit",'DR_log'),
-                                  baseVarName = c("DR", "DR", "DR","DR"),
-                                  order = c(1L, 2L, 1L,1L),
-                                  type = c("logit", "difference", "logit","log"),
-                                  lag = c(0L, 1L, 0L,0L),
-                                  differences = c(0L, 1L, 0L,0L))
-test_that("Testing Log transform",{
-  models <- c(" DR_log ~ avg_oil_pri_barrel_lag_3")
-  scenario_colors=c()
-  scenarios=c()
-  scenario_names<- c()
-  sensitivity=c()
 
-  excelDetails <- reporter(models,scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted')
-
-  
-  expect_equal(excelDetails$modelName,models)
+dr_log_test_assertions <- function(excelDetails){
   expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[,Estimates][1]), -2.451137)
   expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[,Estimates][2]), -0.021689)
   expect_equal(excelDetails$report_summary$estimates_excel[,Significance][2], "PASS")
@@ -43,6 +27,50 @@ test_that("Testing Log transform",{
   expect_equal(excelDetails$report_predicted_df$predicted_values,c(-3.72418997654454, -3.93030464185877, -4.06976279321991, -4.10489843944154, -4.15391483478775, -4.11726098163063, -4.32648435652881, -4.72758016970255, -4.99651968399153, -4.90933122855268, -4.82380557190901, -5.02102788166463, -4.80255067481198, -4.82850478240632, -4.83877075455896, -4.89096815346698, -4.67588883905007, -4.84274701009565, -4.81975701935805, -4.79712850718518, -4.83038446790656, -4.65955003915542, -4.10822403551367, -3.62051813152024, -3.78918369235312, -3.54063152834089, -3.39611268726704, -3.18197321386515, -3.43847789025209, -3.4441892402969, -3.5179307200213, -3.61538514609458, -3.52841357736081, -4.11726098163063, -4.32648435652881, -4.72758016970255, -4.99651968399153, -4.90933122855268, -4.82380557190901, -5.02102788166463, -4.80255067481198, -4.82850478240632, -4.83877075455896, -4.89096815346698, -4.67588883905007, -4.84274701009565, -4.81975701935805, -4.84274701009565))
   expect_equal(excelDetails$report_predicted_df$predicted_values_transformed,c(0.0241326405166435, 0.0196376891795849, 0.0170814398603102, 0.0164916936589308, 0.0157028220434878, 0.0162890694560539, 0.0132139213616802, 0.00884785546467308, 0.00676143803829908, 0.00737742049011937, 0.00803614673966761, 0.00659774152518729, 0.00820878238889466, 0.0079984717851515, 0.0079167797381417, 0.00751414410760428, 0.00931723992947729, 0.0078853631005577, 0.00806874745036639, 0.00825341267010835, 0.00798345129503413, 0.00947072289758407, 0.0164369400419452, 0.0267688031381724, 0.0226140543441297, 0.0289950101283277, 0.0335032547797198, 0.0415036786350646, 0.0321135284608363, 0.0319306396268427, 0.0296607481014005, 0.0269065602647412, 0.0293514427449001, 0.0162890694560539, 0.0132139213616802, 0.00884785546467308, 0.00676143803829908, 0.00737742049011937, 0.00803614673966761, 0.00659774152518729, 0.00820878238889466, 0.0079984717851515, 0.0079167797381417, 0.00751414410760428, 0.00931723992947729, 0.0078853631005577, 0.00806874745036639, 0.0078853631005577))
   expect_equal(excelDetails$report_predicted_df$DR,c(0.0230550377710193,0.0302614827147194, 0.0266152171762145, 0.0263970794720584, 0.0205159813330985, 0.0144808966702119, 0.0125526215078454, 0.00605585636933599, 0.00501704508908471, 0.00549868382568002, 0.00671528251403389, 0.00795537230172205, 0.00534619898291824, 0.00773628048780488, 0.00672400846474162, 0.00717620883081069, 0.00674351585014409, 0.0079463555004092, 0.00889904687803929, 0.0105156816825091, 0.0103572046358762, 0.0175547294506402, 0.0193396321440803, 0.0230583501006036, 0.0251624695369618, 0.0261583675511182, 0.0287639780602917, 0.0280755597821388, 0.0279320884367401, 0.0292564090888393, 0.025986369326348, 0.023807814705812, 0.022279689675751, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA))
+
+  
+}
+test_that("Testing Log transform",{
+  models <- c(" DR_log ~ avg_oil_pri_barrel_lag_3")
+  scenario_colors=c()
+  scenarios=c()
+  scenario_names<- c()
+  sensitivity=c()
+  # excelDetails <- reporter(models,untransform=TRUE,scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted')
+  
+  excelDetails <- reporter(models,untransform=TRUE,report_type = 'unformatted')
+  dr_log_test_assertions(excelDetails)
+  expect_equal(excelDetails$modelName,models)
+  
+  
+  
+  untransform_config  <-  data.table(stringsAsFactors=FALSE,
+                                     varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit",'DR_log'),
+                                     baseVarName = c("DR", "DR", "DR","DR"),
+                                     order = c(1L, 2L, 1L,1L),
+                                     type = c("logit", "difference", "logit","log"),
+                                     lag = c(0L, 1L, 0L,0L),
+                                     differences = c(0L, 1L, 0L,0L))
+  
+  
+
+  # #test with custom input for transform
+  excelDetails_1 <- reporter(models,untransform=TRUE,transformConfig=untransform_config, scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted')
+  # 
+  dr_log_test_assertions(excelDetails_1)
+  
+  ## try with an incorrect transform logic
+  untransform_config  <-  data.table(stringsAsFactors=FALSE,
+                                     varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit",'DR_log1'), #here there is no value called DR_log1
+                                     baseVarName = c("DR", "DR", "DR","DR"),
+                                     order = c(1L, 2L, 1L,1L),
+                                     type = c("logit", "difference", "logit","log1"),
+                                     lag = c(0L, 1L, 0L,0L),
+                                     differences = c(0L, 1L, 0L,0L))
+  
+  
+  expect_error(reporter(models,untransform=TRUE,transformConfig=untransform_config, scenarios=scenarios,scenario_names=scenario_names,scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted'))
+
 })
 
 test_that("Testing sensitivity with transformations",{
@@ -55,7 +83,7 @@ test_that("Testing sensitivity with transformations",{
   scenario_names<- c()
   sensitivity=c(avg_oil_pri_barrel_lag_3=0.05,avg_oil_pri_barr=0.07)
 
-  excelDetails <- reporter(models,scenarios=c(),scenario_names=c(),scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted')
+  excelDetails <- reporter(models,scenarios=c(),scenario_names=c(),scenario_colors=scenario_colors,sensitivity=sensitivity,report_type = 'unformatted',untransform=TRUE)
   expect_equal(excelDetails$modelName,models)
   expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[,Estimates][1]), 0.022112)
   expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[,Estimates][2]), -0.000171)

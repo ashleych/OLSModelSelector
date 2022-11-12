@@ -20,7 +20,6 @@ reporter <-
       scenarios <- list()
       scenario_names <- list()
     }
-    
     if ("scenario_colors" %in% names(input_arg_list)) {
       scenario_colors <- input_arg_list$scenario_colors
     } else {
@@ -31,6 +30,11 @@ reporter <-
       sensitivity <- input_arg_list$sensitivity
     } else {
       sensitivity <- list()
+    }
+    if ("untransform" %in% names(input_arg_list)) {
+      untransformCheck <- input_arg_list$untransform
+    } else {
+      untransformCheck <- FALSE
     }
     
     model_LHS <- trimws(unlist(strsplit(model, "[~]"))[[1]])
@@ -68,13 +72,25 @@ reporter <-
       selectedModelForecaster(selectedModel, selectedModelObject, allModelEvaluated)
     
     report_pred_plot <-
-      selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated,report_predicted_df=report_predicted_df)
+      selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated)
     
     # Untransform Logic ----------------
     transformedObj <- NA
-    if (exists("transformConfig", envir = .GlobalEnv)) {
+    
+    if(untransformCheck == TRUE) {
       
-      orderList <- transformConfigCheck(model_LHS)
+      if ("transformConfig" %in% names(input_arg_list)){
+        transformConfig <- input_arg_list$transformConfig
+        stopifnot(is.data.frame(transformConfig))
+        setDT(transformConfig)
+      } else {
+        stopifnot(exists("transformConfig", envir = .GlobalEnv) & is.data.frame(transformConfig))
+        transformConfig<- copy(transformConfig)
+        setDT(transformConfig)
+      }
+
+      
+      orderList <- transformConfigCheck(model_LHS,transformConfig)
 
       no_of_elements_to_be_removed_for_untransform <- orderList[type == 'difference',lag * differences] # to check if there is any differencing within the transofrm, and to use it only for differencing operations
       if (length(no_of_elements_to_be_removed_for_untransform)==0){
@@ -100,6 +116,7 @@ reporter <-
       report_predicted_df[,(baseVar) := baseData]
       comment(report_predicted_df) <- baseVar ## USeful for plotting, this will 
       #tell the plotting function what the untransformed response variable typically this is the observed Default rate
+      
     }
     # start of scenario forecasts and charts--------------------------------
     selectedModelScenariosCharts <- list()
@@ -280,7 +297,7 @@ reporter <-
         
       )
     
-    names(report_details) = c(
+    names(report_details) <- c(
       "modelName",
       "report_summary",
       "report_selectedModelDiagnostics",
