@@ -36,7 +36,6 @@ reporter <-
     } else {
       untransformCheck <- FALSE
     }
-    
     model_LHS <- trimws(unlist(strsplit(model, "[~]"))[[1]])
     RHS_combined <- trimws(unlist(strsplit(model, "[~]"))[[2]])
     model_RHS <- trimws(unlist(strsplit(RHS_combined, '[+]')))
