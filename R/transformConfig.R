@@ -10,7 +10,14 @@
 transformConfigCheck <- function(var,transformConfig) {
 
   setDT(transformConfig)
-  stopifnot(var %in% unique(transformConfig$varName))
+  if(! (var %in% unique(transformConfig$varName))){
+  
+    stop(sprintf("No rules found for untransform for variable : %s. Check if an entry is present in transformConfig for %s  else make an entry ",var))
+ 
+    
+  }
+
+  
   orderList <- transformConfig[varName == var, ]
   # stopifnot(unique(transformConfig$baseVarName) %in% colnames(macrodata))
   # stopifnot(unique(transformConfig$varName) %in% colnames(macrodata))

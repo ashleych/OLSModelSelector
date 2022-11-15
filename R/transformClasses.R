@@ -24,27 +24,9 @@ differenceClass <- setClass(
 )
 
 
-#difference_f 
 
-# setGeneric(
-#   name = "difference_f",
-#   def = function(theObject)
-#   {
-#     standardGeneric("difference_f")
-#   }
-# )
-# 
-# setMethod(
-#   f = 'difference_f',
-#   signature = 'differenceClass',
-#   definition = function(theObject) {
-#     theObject@differenceData - shift(theObject@differenceData,
-#                                      n = theObject@shift,
-#                                      type = 'lag')
-#   }
-# )
 
-# undifference_f ----------------------------------------------------------
+## Differencing transform  ----------------------------------------------------------
 
 
 setMethod(
@@ -57,7 +39,7 @@ setMethod(
     return(theObject)
   }
 )
-
+## Differencing untransform  ----------------------------------------------------------
 setMethod(
   f = 'untransform',
   signature = 'differenceClass',
@@ -141,6 +123,40 @@ setMethod(
 )
 
 
+# multiply Class --------------------
+
+multiplyClass <- setClass(
+  'multiplyClass',
+  slots = list(
+    multiplyData = 'numeric',
+    multiplyFactor= 'numeric',
+    unmultiplyData = 'numeric',
+    inputData = 'numeric'
+  )
+)
+
+## multiplyTransform ----------------------------------------------------------
+
+setMethod(f="transform",signature="multiplyClass",
+          definition=function(theObject)
+          { 
+            # x <- theObject@inputData
+            theObject@multiplyData <-theObject@inputData * theObject@multiplyFactor
+            return(theObject)
+          })
+
+
+## multiply Untransform --------------------------------------------------------
+
+setMethod(
+  f = "untransform",
+  signature = "multiplyClass",
+  definition = function(theObject,x)
+  {
+    theObject@unmultiplyData <-x / theObject@multiplyFactor
+    return(theObject)
+  }
+)
 
 
 # TransformClass ----------------------------------------------------------
@@ -151,7 +167,8 @@ transformOrderClass <- setClass(
     order = 'numeric',
     type = 'character',
     lag = 'numeric',
-    differences = 'numeric'
+    differences = 'numeric',
+    multiplyFactor ='numeric'
   )
 )
 
@@ -166,6 +183,7 @@ transformClass <- setClass(
     # after each transform this holds the result of the transform, to be passed on to the next transform function
     logitObject = 'logitClass',
     differencesObject = 'differenceClass',
+    multiplyObject = 'multiplyClass',
     logObject='logClass',
     outputData = 'numeric',
     transform_order_1 = 'transformOrderClass',
@@ -205,7 +223,8 @@ setMethod(
         type = orderList[i,type],
         # can be 3 strings - "log", "logit" or "differences"
         lag =orderList[i,lag],
-        differences = orderList[i,differences]
+        differences = orderList[i,differences],
+        multiplyFactor =  orderList[i,multiplyFactor]
       )
       slot(theObject, paste0("transform_order_", orderList[i,order])) <- transform_order
       slot(theObject, "tranformCount") <- i
@@ -249,6 +268,13 @@ setMethod(
         theObject@logObject <- transform(theObject@logObject)
         theObject@inputData <- theObject@logObject@logData
       }
+      
+      if (transformation@type == "multiply") {
+        
+        theObject@multiplyObject <- multiplyClass(inputData = theObject@inputData,multiplyFactor=transformation@multiplyFactor)
+        theObject@multiplyObject <- transform(theObject@multiplyObject)
+        theObject@inputData <- theObject@multiplyObject@multiplyData
+      }
 
       
       
@@ -291,6 +317,13 @@ setMethod(
         theObject@logObject@inputData <- theObject@inputData
         theObject@logObject <- untransform(theObject@logObject,theObject@inputData)
         theObject@inputData <- theObject@logObject@unlogData
+      }
+      
+      if (transformation@type == "multiply") {
+        # theObject@logitObject <- logitClass(inputData = theObject@inputData)
+        theObject@multiplyObject@inputData <- theObject@inputData
+        theObject@multiplyObject <- untransform(theObject@multiplyObject,theObject@inputData)
+        theObject@inputData <- theObject@multiplyObject@unmultiplyData
       }
       
     }

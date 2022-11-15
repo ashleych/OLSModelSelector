@@ -202,7 +202,7 @@ selectedModelScenariosMEVCharter <- function(scenariosList,baseline_predictions,
   baseline_predictions[,scenario:='baseline']
 
   make_long_format<-function(x){
-    x@predictions <- x@predictions[,scenario:=x@scenario_name]
+    x@predictions <- x@predictions[,scenario:=x@scenario_name]  #!TODO: throws a warning, to fix later https://stackoverflow.com/questions/20687235/warning-invalid-internal-selfref-detected-when-adding-a-column-to-a-data-tab
     return(x@predictions)
   }
   all_scenarios_list<-lapply(scenariosList,make_long_format)
