@@ -113,7 +113,7 @@ formatModelEvalResults <- function(allModelEvaluated) {
   meltedEval$variableRenamed <- NA
   for (row in 1:nrow(meltedEval)) {
     meltedEval$variableRenamed[row] <-
-      check_variable_order(meltedEval[row]) #rename variables as Var1, var 2 etc
+      renameAsOrderedVariables(meltedEval[row]) #rename variables as Var1, var 2 etc
   }
   
   
