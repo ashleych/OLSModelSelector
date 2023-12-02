@@ -268,3 +268,14 @@ Try running this in case it fails to install because of warnings
 Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"=TRUE) 
 
 ```
+### Z-score transforms
+used when zscore untransforms have to be done. Like most untransforms, required the original data (actuals), which needs to be passed, additionally rho needs to be passed. Useful for building models using z-index, predictions are in z-index, but untransform will convert it to PDs
+```
+ rho<-0.02128422
+  call_excel(
+    models,
+    unTransformFunction=untransformZscore,
+    originalUntransformedValues=macrodata$PIT_PD,
+    rho = rho
+  )
+```
