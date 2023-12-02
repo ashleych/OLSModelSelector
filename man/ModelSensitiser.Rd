@@ -10,6 +10,7 @@ ModelSensitiser(
   predicted_df,
   sensitivity,
   rhs,
+  forecast_df,
   ...
 )
 }

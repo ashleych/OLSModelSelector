@@ -199,7 +199,7 @@ reporter <-
       }
       s <- new("scenarioClass",
               scenario_name = 'Baseline',predictions=report_predicted_df) # add baseline to the list
-      scenario_list<- append(scenario_list,s)
+      scenario_list <- append(scenario_list,s)
       ## get the order of scenarios
     
       means<-c()
@@ -210,11 +210,15 @@ reporter <-
         # if (!exists("scenario_names")){}
         
         if (!exists("base_var")){
-          base_var <- comment( model_scenario$scenario_list[[1]]@predictions)
+          base_var <- comment( model_scenario@predictions)
+          # base_var <- comment( model_scenario$scenario_list[[1]]@predictions)
+          
         }
-        index_of_predictions <- (tsp(stats::na.contiguous(scen_preds[, ..base_var][[1]]))[2] +1):nrow(baseline_preds)
+        index_of_predictions <-max(which(!is.na(scen_preds[, ..base_var][[1]])))+1:nrow(scen_preds)
+        # index_of_predictions <- (tsp(stats::na.contiguous(scen_preds[, ..base_var][[1]]))[2] +1):nrow(baseline_preds)
+        # means=c(means,mean(scen_preds$predicted_values_transformed,na.rm=TRUE))
+        means=c(means,mean(scen_preds$predicted_values_transformed[index_of_predictions],na.rm=TRUE))
         
-        means=c(means,mean(scen_preds$predicted_values_transformed[index_of_predictions]))
         scenario_names<-c(scenario_names,model_scenario@scenario_name)
         names(means) <-scenario_names
       }

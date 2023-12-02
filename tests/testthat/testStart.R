@@ -1,4 +1,4 @@
-
+library(testthat)
 #lints <- lintr::lint("~/automod/OLSModelSelector/tests/testthat/testStart.R")
 # purrr::keep(lints, ~ .$type %in% c("error", "warning"))
 # macrodata[,DR_logit := logit(DR)]
@@ -14,7 +14,7 @@ validationSampler(macrodata, 1:29, 30:33, 1:48)
 
 
 dr_log_test_assertions <- function(excelDetails, base_variable = "DR") {
-  expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[, Estimates][1]), -2.451137)
+ testthat::expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[, Estimates][1]), -2.451137)
   expect_equal(as.numeric(excelDetails$report_summary$estimates_excel[, Estimates][2]), -0.021689)
   expect_equal(excelDetails$report_summary$estimates_excel[, Significance][2], "PASS")
 
@@ -40,16 +40,17 @@ test_that("Testing Log transform - where column names arent DR", {
   validationSampler(macrodata, 1:29, 30:33, 1:48)
   expect_error(reporter(models, untransform = TRUE, report_type = "unformatted")) # cos no transformconfig with the right column names
 
+
   untransform_config <- data.table(
     stringsAsFactors = FALSE,
-    varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit", "def_rate_log"),
-    baseVarName = c("DR", "DR", "DR", "def_rate"),
-    order = c(1L, 2L, 1L, 1L),
-    type = c("logit", "difference", "logit", "log"),
-    lag = c(0L, 1L, 0L, 0L),
-    differences = c(0L, 1L, 0L, 0L)
+    varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit", "DR_log","DR","def_rate_log"),
+    baseVarName = c("DR", "DR", "DR", "DR","DR","def_rate"),
+    order = c(1L, 2L, 1L, 1L,1L,1L),
+    type = c("logit", "difference", "logit", "log","multiply","log"),
+    lag = c(0L, 1L, 0L, 0L,0L,0L),
+    differences = c(0L, 1L, 0L, 0L,0L,0L),
+    multiplyFactor= c(0L, 0L, 0L, 0L,1L,0L)
   )
-
   models <- c(" def_rate_log ~ avg_oil_pri_barrel_lag_3")
   excelDetails <- reporter(models, untransform = TRUE, report_type = "unformatted", transformConfig = untransform_config)
   dr_log_test_assertions(excelDetails, base_variable = "def_rate")
@@ -74,17 +75,17 @@ test_that("Testing Log transform", {
 
 
 
+
   untransform_config <- data.table(
     stringsAsFactors = FALSE,
-    varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit", "DR_log"),
-    baseVarName = c("DR", "DR", "DR", "DR"),
-    order = c(1L, 2L, 1L, 1L),
-    type = c("logit", "difference", "logit", "log"),
-    lag = c(0L, 1L, 0L, 0L),
-    differences = c(0L, 1L, 0L, 0L)
+    varName = c("DR_logit_FD", "DR_logit_FD", "DR_logit", "DR_log","DR"),
+    baseVarName = c("DR", "DR", "DR", "DR","DR"),
+    order = c(1L, 2L, 1L, 1L,1L),
+    type = c("logit", "difference", "logit", "log","multiply"),
+    lag = c(0L, 1L, 0L, 0L,0L),
+    differences = c(0L, 1L, 0L, 0L,0L),
+    multiplyFactor= c(0L, 0L, 0L, 0L,1L)
   )
-
-
 
   # #test with custom input for transform
   excelDetails_1 <- reporter(models, untransform = TRUE, transformConfig = untransform_config, scenarios = scenarios, scenario_names = scenario_names, scenario_colors = scenario_colors, sensitivity = sensitivity, report_type = "unformatted")
@@ -141,7 +142,7 @@ test_that("LOgit FD Testing sensitivity with transformations", {
   dr_logit_test_assertions(excelDetails)
 })
 
-test_that("LOgit FD Testing the scenarios", {
+test_that("Logit FD Testing the scenarios", {
   macrodata <- copy(ST.auto.1::macrodata)
 
   list2env(list(macrodata = macrodata), envir = .GlobalEnv) ## put this in the global environment
@@ -151,12 +152,15 @@ test_that("LOgit FD Testing the scenarios", {
   excelDetails_1 <- reporter(models, scenarios = list(upturn, downturn), report_type = "unformatted", untransform = TRUE,do_not_plot=TRUE)
 
   dr_logit_test_assertions(excelDetails_1, sensitivity_tests = FALSE)
-  browser()
+
   baseline_preds <- excelDetails_1$report_predicted_df
   scen1_preds <- excelDetails_1$scenario_list[[1]]@predictions
   base_var <- comment(scen1_preds)
   na.contiguous(scen1_preds[, ..base_var])
-  index_of_predictions <- (tsp(stats::na.contiguous(scen1_preds[, ..base_var][[1]]))[2] + 1):nrow(baseline_preds)
+  
+  index_of_predictions <-max(which(!is.na(scen1_preds[, ..base_var][[1]])))+1:nrow(baseline_preds)
+  
+  # index_of_predictions <- (tsp(stats::na.contiguous(scen1_preds[, ..base_var][[1]]))[2] + 1):nrow(baseline_preds)
   # na.contiguous gives the longest non_NA sequence, tsp[2] is to obtain the end position of non-NA sequence. Assumptions that predictions will begin from the next position
   # tsp[1] would have given the start positin of the sequence, typically 1, as DR columns would be from 1 to last snapshot perid
 
