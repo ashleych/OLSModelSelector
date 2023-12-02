@@ -11,6 +11,7 @@ reporter <-
   function(model,
            report_type = 'html',
            multiple = FALSE,
+           unTransformFunction=NA,
            ...) {
     input_arg_list <- list(...)
     
@@ -105,7 +106,7 @@ reporter <-
         selectedModelCharter(selectedModel, selectedModelObject, allModelEvaluated)
       
     }
-    
+
     
     # Untransform Logic ----------------
     transformedObj <- NA
@@ -320,6 +321,19 @@ reporter <-
     if (nrow(dynamic) == 1) {
       report_predicted_df <- report_dynamic_predicted_df
       report_pred_plot <- report_pred_plot_dynamic
+      
+    }
+    
+    
+    # Custom untransform logic ----------------
+    if (!is.null(unTransformFunction)){
+      if(!is.function(unTransformFunction)){
+        stop(paste0("The customTransformFunction does not exist or is not a function.",unTransformFunction))  
+      }
+      browser()
+      transformedValues<- unTransformFunction(valuesToBeTransformed=report_predicted_df$predicted_values,...)
+      print("transformed values")
+      print(transformedValues)
       
     }
     

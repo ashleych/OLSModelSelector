@@ -32,8 +32,7 @@ macrodata<-fread("~/automod/OLSModelSelector/tests/testthat/bsfMacroData.csv")
   }
   excelDetails <- reporter(models, report_type = "unformatted")
   		
-  # 0.660	0.643	0.687
-  
+
   expect_equal(as.numeric(excelDetails$report_summary$otherStats_excel$R2), 0.6604, tolerance = 0.0001)
   expect_equal(as.numeric(excelDetails$report_summary$otherStats_excel$adjR2), 0.6430, tolerance = 0.0001)
   expect_equal(as.numeric(excelDetails$report_summary$otherStats_excel$MAPE), 0.6868, tolerance = 0.0001)
@@ -46,17 +45,18 @@ macrodata<-fread("~/automod/OLSModelSelector/tests/testthat/bsfMacroData.csv")
 
   expect_equal(max(which(!is.na(excelDetails$report_predicted_df$predicted_values))),47)
   configDynamic("Z_index","Z_index_lag1",1,46)
-
+  
+  #this checks for the dynamically forecasted value, this value is present in 
+  # /home/ashleyubuntu/automod/OLSModelSelector/tests/testthat , sheet Z_index ~ cp_General_governm.1, cell I135 where the values are formula driven
+  
   excelDetails_with_configDynamic <- reporter(models, report_type = "unformatted")
   expect_equal(max(which(!is.na(excelDetails_with_configDynamic$report_predicted_df$predicted_values))),115)
  forecast<- excelDetails_with_configDynamic$report_predicted_df
- expect_equal( forecast$predicted_values[nrow(forecast)],0.23412,tolerance=0.0001) #this checks for the dynamically forecasted value, this value is present in 
+ expect_equal( forecast$predicted_values[nrow(forecast)],0.23412,tolerance=0.0001) 
  expect_equal(forecast[Date=="01/09/2022",predicted_values],-1.60078,tolerance = 0.0001)
  expect_equal(forecast[Date=="01/12/2022",predicted_values],-0.95327,tolerance = 0.0001)
+
  
- 
- 
- # /home/ashleyubuntu/automod/OLSModelSelector/tests/testthat , sheet Z_index ~ cp_General_governm.1, cell I135 where the values are formula driven
  
  
 })
