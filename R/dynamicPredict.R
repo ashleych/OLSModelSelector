@@ -18,16 +18,16 @@ dynamicForecast <- function(selectedModel,
   forecast_df1<- copy(forecast_df)
    laggedRelationSplit <- trimws(unlist(strsplit(laggedRelation,"[:]")))
   # autoDepVar is short for autocorrelated independent variable ie the laggedVar.
-  noOfLags<-laggedRelationSplit[[3]]
+  noOfLags<- as.numeric(laggedRelationSplit[[3]])
   autoVar <- laggedRelationSplit[[2]]
   depVar <- laggedRelationSplit[[1]]
-  for (i in 1:trainIndex) {
+  for (i in 1:(trainIndex+noOfLags)) {
     forecast_df1$predicted_values[i] <-
       predict(selectedModelObject, newdata = forecast_df1[i,])
 
   }
 
-  for (j in trainIndex:nrow(forecast_df1)) {
+  for (j in (trainIndex+noOfLags+1):nrow(forecast_df1)) {
     lookBackIndex <- j - as.numeric(noOfLags)
     forecast_df1[[autoVar]][j] <-
       forecast_df1$predicted_values[lookBackIndex]

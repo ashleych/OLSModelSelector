@@ -8,7 +8,7 @@
 #' @examples
 
 configDynamic<- function(depVar, lagVar, noofLags, trainIndex) {
-
+# Make unique entries only in this df
   if (!exists("configDynamic_Df")) {
     configDynamic_Df <- data.table(
       depVar = depVar,
@@ -26,6 +26,9 @@ configDynamic<- function(depVar, lagVar, noofLags, trainIndex) {
   configDynamic_Df <- rbind(
     configDynamic_Df,new)
   }
+  # make the rows unique
+  configDynamic_Df<-unique(configDynamic_Df)
+  
   list2env(list(configDynamic_Df=configDynamic_Df), envir = .GlobalEnv)
 }
 

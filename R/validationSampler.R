@@ -65,6 +65,8 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,trainData
     identical(sort(colnames(macrodata)), sort(colnames(test_df)))
   )
   if (!all(macrometa$Variable %in% colnames(macrodata))) {
+    print("Following variables missing:")
+    print(macrometa$Variable[! macrometa$Variable %in% colnames(macrodata)])
     stop("Variable listed in Macrometa data is not available in macrodata")
   }
   

@@ -138,7 +138,6 @@ test_that("LOgit FD Testing sensitivity with transformations", {
 
   excelDetails <- reporter(models, scenarios = c(), scenario_names = c(), scenario_colors = scenario_colors, sensitivity = sensitivity, report_type = "unformatted", untransform = TRUE)
   expect_equal(excelDetails$modelName, models)
-  browser()
   dr_logit_test_assertions(excelDetails)
 })
 
@@ -172,3 +171,5 @@ test_that("Logit FD Testing the scenarios", {
   print(is_intuitive)
 
 })
+
+
