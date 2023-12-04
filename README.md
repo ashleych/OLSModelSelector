@@ -87,7 +87,11 @@ allModelEvaluated<-modelEvaluator(allModelsDiagnostics)
 glimpse(allModelEvaluated)
 ```
  
- 
+In case you want to see a better formatted table use, this presents the variables and estiamtes etc in a more condensed form
+```
+allModelEvaluated<-modelEvaluator(allModelsDiagnostics)
+glimpse(formatModelEvalResults(allModelEvaluated))
+```
 
 one can see how many models have passed
 
