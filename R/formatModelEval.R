@@ -144,6 +144,9 @@ formatModelEvalResults <- function(allModelEvaluated) {
     "FinalResults"
   ) 
   
+  # TODO: see that vif_error is not available in some one Simrans run of the function.  TO investigate why vif_error didnt show up,. For now fixing this by subsetting the ids for only those ids that are colnames in the data
+  ids <- ids[!ids %in% colnames(evaluatedModels)]
+  
   
   #melt the table
   ids <- c(ids, variablesNamesSequence)
