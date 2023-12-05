@@ -326,11 +326,10 @@ reporter <-
     
     
     # Custom untransform logic ----------------
-    if (!is.null(unTransformFunction)){
+    if (!is.na(unTransformFunction)){
       if(!is.function(unTransformFunction)){
         stop(paste0("The customTransformFunction does not exist or is not a function.",unTransformFunction))  
       }
-      browser()
       transformedValues<- unTransformFunction(valuesToBeTransformed=report_predicted_df$predicted_values,...)
       print("transformed values")
       print(transformedValues)
