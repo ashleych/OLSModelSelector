@@ -31,7 +31,9 @@ selectedModelRegressionResults <- function(selectedModel,allModelEvaluated,direc
   stats <- do.call(paste0,CJ( c("se.","t.","p."),used_vars_intercept))
   vif_stats<- paste0("VIF.",used_vars)
   keep_cols<- c(stats,vif_stats,paste0("Estimates.",used_vars_intercept))
-  chosenModelResults.stats <- chosenModelResults[, lapply(.SD,as.character), .SDcols = keep_cols][, rn := .I]
+  chosenModelResults.numeric<- chosenModelResults[, lapply(.SD,format,scientific=FALSE), .SDcols = keep_cols]
+  
+  chosenModelResults.stats <- chosenModelResults.numeric[, lapply(.SD,as.character), .SDcols = keep_cols][, rn := .I]
 
   chosenModelResults.melt <- melt(chosenModelResults.stats,
                                   "rn")

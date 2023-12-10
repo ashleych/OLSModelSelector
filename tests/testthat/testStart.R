@@ -36,7 +36,9 @@ test_that("Testing Log transform - where column names arent DR", {
   setnames(macrodata, "DR", "def_rate")
   setnames(macrodata, "DR_log", "def_rate_log")
   list2env(list(macrodata = macrodata), envir = .GlobalEnv) ## put this in the global environment
-
+  macrometa<-data.table(Variable=names(macrodata),Type=-1)
+  
+  list2env(list(macrometa = macrometa), envir = .GlobalEnv) ## put this in the global environment
   validationSampler(macrodata, 1:29, 30:33, 1:48)
   expect_error(reporter(models, untransform = TRUE, report_type = "unformatted")) # cos no transformconfig with the right column names
 
@@ -60,7 +62,9 @@ test_that("Testing Log transform", {
   macrodata <- copy(ST.auto.1::macrodata)
 
   list2env(list(macrodata = macrodata), envir = .GlobalEnv) ## put this in the global environment
-
+  macrometa<-data.table(Variable=names(macrodata),Type=-1)
+  
+  list2env(list(macrometa = macrometa), envir = .GlobalEnv) ## put this in the global environment
   validationSampler(macrodata, 1:29, 30:33, 1:48)
   models <- c(" DR_log ~ avg_oil_pri_barrel_lag_3")
   scenario_colors <- c()
@@ -145,7 +149,9 @@ test_that("Logit FD Testing the scenarios", {
   macrodata <- copy(ST.auto.1::macrodata)
 
   list2env(list(macrodata = macrodata), envir = .GlobalEnv) ## put this in the global environment
-
+  macrometa<-data.table(Variable=names(macrodata),Type=-1)
+  
+  list2env(list(macrometa = macrometa), envir = .GlobalEnv) ## put this in the global environment
   validationSampler(macrodata, 1:29, 30:33, 1:48)
   models <- c(" DR_logit_FD ~ avg_oil_pri_barrel_lag_3")
   excelDetails_1 <- reporter(models, scenarios = list(upturn, downturn), report_type = "unformatted", untransform = TRUE,do_not_plot=TRUE)

@@ -215,6 +215,10 @@ reporter <-
           # base_var <- comment( model_scenario$scenario_list[[1]]@predictions)
           
         }
+        
+        if(is.null(base_var)){
+          base_var <- model_LHS
+        }
         index_of_predictions <-max(which(!is.na(scen_preds[, ..base_var][[1]])))+1:nrow(scen_preds)
         # index_of_predictions <- (tsp(stats::na.contiguous(scen_preds[, ..base_var][[1]]))[2] +1):nrow(baseline_preds)
         # means=c(means,mean(scen_preds$predicted_values_transformed,na.rm=TRUE))
@@ -331,8 +335,7 @@ reporter <-
         stop(paste0("The customTransformFunction does not exist or is not a function.",unTransformFunction))  
       }
       transformedValues<- unTransformFunction(valuesToBeTransformed=report_predicted_df$predicted_values,...)
-      print("transformed values")
-      print(transformedValues)
+
       
     }
     

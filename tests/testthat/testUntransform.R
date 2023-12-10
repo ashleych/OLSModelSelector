@@ -53,7 +53,7 @@ test_that("Testing Untransform ", {
 
   rho<-0.02128422
   # call_excel(models,report_title = "new_testing")
-  browser()
+
   reporter(
     models,
     # scenarios = list(upturn, downturn),
@@ -64,3 +64,5 @@ test_that("Testing Untransform ", {
   )
   
 })
+
+
