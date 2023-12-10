@@ -70,6 +70,43 @@ allModels <-
     no_of_vars = 2
   )
 ```
+Sometimes its not possible to generate models for all the combinations of variables, we need to send in the base variables and then the code can create model formulae combo in such a way that the related variables are not togehter in any combination
+
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+  
+baseVars<-c("avg_oil_pri_barrel","Non_oil_ECI","ECI_yoy_ch")
+allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
+
+# allFormulae will give a result as follows
+# [1] "DR ~ avg_oil_pri_barrel_3QMA + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"              
+# [2] "DR ~ avg_oil_pri_barrel_3QMA_lag_2 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
+# [3] "DR ~ avg_oil_pri_barrel + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"                   
+# [4] "DR ~ avg_oil_pri_barrel_3QMA_lag_1 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
+# [5] "DR ~ avg_oil_pri_barrel_6QMA_lag_1 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
+# [6] "DR ~ avg_oil_pri_barrel_lag_2 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"             
+# [7] "DR ~ avg_oil_pri_barrel_lag_3 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"  and ...
+# Youll find that all combinations are such that they dont contain any related variables
+# })
+```
+
+Post this one can select the models that are significant in terms of pvalues
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+  
+baseVars<-c("avg_oil_pri_barrel","Non_oil_ECI","ECI_yoy_ch")
+allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
+formualeFiltered<- getFormulaofAllSignificantModels(allFormulae,train_df )
+# this will give you set of all formulae that are significant
+#Additionally one can pass in the pvalue threshold as a parameter
+
+formualeFiltered<- getFormulaofAllSignificantModels(allFormulae,train_df ,pValueThreshold = 0.05)
+
+allModels<-modelDeveloper(modelsNamesList = formualeFiltered)
+
+```
+
+
 
 ## Models Diagnistics
 
