@@ -7,22 +7,57 @@
 #' @export
 #' @examples
 #' getUnRelatedVariableCombinations(c("DR"),c("oil_price",'gdp_ratio'),train_df)
-getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df) {
-  relatedVarsList = list()
+getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,numberOfVariables,strictMax=TRUE) {
+  # Check if all basevariables have some column with tht name
+  colsAvailable<-names(train_df)
+  
   for (b in baseVariables) {
-    relatedVarsList[[b]] <- names(train_df)[names(train_df) %like% b]
+    if(length(colsAvailable[grep(b, colsAvailable)])==0){
+      print(paste0(b,"or a column with a similar name is not found in train_df"))
+      stop("Some columns in basevariables not found in the train_df")
+    }
+  }
+  allFormulae<-c()
+  
+  
+  numberOfVariables<-3
+  indexStart<-1
+  if(strictMax){
+    indexStart<-numberOfVariables
+  }
+
+  allCombosOfBaseVars<- sapply(indexStart:numberOfVariables, function(x) {
+    combn(baseVariables,x,simplify = FALSE,FUN=c)
+  })
+  
+  allCombosOfBaseVars<-combn(baseVariables,numberOfVariables,simplify = FALSE,FUN=c)
+  getFormulaeForParticularBaseVarCombo <-function(LHS_vars,baseVariablesCombination,train_df){
+    
+    
+    relatedVarsList = list()
+    for (b in baseVariablesCombination) {
+      relatedVarsList[[b]] <- names(train_df)[names(train_df) %like% b]
+    }
+    
+    
+    combinations <- do.call(expand.grid, relatedVarsList)
+    LHS_all <- paste0(LHS_vars, " ~ ")
+    RHS_all <-
+      apply(combinations, 1, function(row)
+        paste(row, collapse = " + "))
+    allFormulae <-
+      unlist(lapply(LHS_all, function(x) {
+        paste0(x, RHS_all)
+      }))
+    
+    return(allFormulae)
   }
   
   
-  combinations <- do.call(expand.grid, relatedVarsList)
-  LHS_all <- paste0(LHS_vars, " ~ ")
-  RHS_all <-
-    apply(combinations, 1, function(row)
-      paste(row, collapse = " + "))
-  allFormulae <-
-    unlist(lapply(LHS_all, function(x) {
-      paste0(x, RHS_all)
-    }))
-  
+  for (baseVarCombo in allCombosOfBaseVars) {
+    formulae<-getFormulaeForParticularBaseVarCombo(LHS_vars,baseVarCombo,train_df)
+    allFormulae<-c(allFormulae,formulae)
+  }
   return(allFormulae)
 }
+
