@@ -4,7 +4,7 @@
 \alias{getFormulaofAllSignificantModels}
 \title{getFormulaofAllSignificantModels}
 \usage{
-getFormulaofAllSignificantModels(allFormulae, train_df)
+getFormulaofAllSignificantModels(allFormulae, train_df, pValueThreshold = 0.1)
 }
 \arguments{
 \item{allFormulae}{List of strings containing all formulae or model names}
