@@ -11,9 +11,31 @@ validationSampler(macrodata, 1:29, 30:33, 1:48)
 # first identify the baseVariables
 # After looking at the macrovariables one can see that these are the base variables, and all other variables are combinarions of these
 baseVars<-c("avg_oil_pri_barrel","Non_oil_ECI","ECI_yoy_ch")
-allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
+allFormulae<-getUnRelatedVariableCombinations("DR",baseVars,train_df,3,TRUE,'startsWith')
 
-expect_equal(length(allFormulae), 42)
+expect_equal(length(allFormulae), 14)
+
+
+allFormulaeWithCheckAnyPattern<-getUnRelatedVariableCombinations("DR",baseVars,train_df,3,TRUE,'checkany')
+expect_equal(length(allFormulaeWithCheckAnyPattern), 42)
+
+# test for non exact match of max number of variables
+allFormulae<-getUnRelatedVariableCombinations("DR",baseVars,train_df,3,FALSE )
+
+expect_equal(length(allFormulae), 47)
+formulaeDT<-data.table(formulae=allFormulae)
+splitTemp <- formulaeDT[,  tstrsplit(formulae, "[+]", fill = NA)]
+formulaeDT<-cbind(formulaeDT,splitTemp)
+expect_equal(formulaeDT[,uniqueN(formulae)] , formulaeDT[,.N])
+
+numberOfVariables<-3
+indexStart<-1
+duplicates<-formulaeDT[duplicated(formulaeDT, by=c("formulae"))]
+
+expect_equal(nrow(duplicates),0)
+
+
+
 })
 # allFormulae
 # [1] "DR ~ avg_oil_pri_barrel_3QMA + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"              

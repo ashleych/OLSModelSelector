@@ -78,7 +78,7 @@ Sometimes its not possible to generate models for all the combinations of variab
   
 baseVars<-c("avg_oil_pri_barrel","Non_oil_ECI","ECI_yoy_ch")
 allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
-
+"DR ~ avg_oil_pri_barrel_3QMA + avg_oil_pri_barrel + avg_oil_pri_barrel_6QMA_lag_1"
 # allFormulae will give a result as follows
 # [1] "DR ~ avg_oil_pri_barrel_3QMA + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"              
 # [2] "DR ~ avg_oil_pri_barrel_3QMA_lag_2 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
@@ -86,7 +86,8 @@ allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df 
 # [4] "DR ~ avg_oil_pri_barrel_3QMA_lag_1 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
 # [5] "DR ~ avg_oil_pri_barrel_6QMA_lag_1 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"        
 # [6] "DR ~ avg_oil_pri_barrel_lag_2 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"             
-# [7] "DR ~ avg_oil_pri_barrel_lag_3 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"  and ...
+# [7] "DR ~ avg_oil_pri_barrel_lag_3 + Non_oil_ECI_yoy_ch_3QMA_lag_3 + ECI_yoy_ch_3QMA_lag_4"  
+and ...
 # Youll find that all combinations are such that they dont contain any related variables
 # })
 ```

@@ -9,7 +9,8 @@ getUnRelatedVariableCombinations(
   baseVariables,
   train_df,
   numberOfVariables,
-  strictMax = TRUE
+  strictMax = TRUE,
+  patternType = "startsWith"
 )
 }
 \arguments{
@@ -18,6 +19,12 @@ getUnRelatedVariableCombinations(
 \item{baseVariables}{Names of the untransformed variables that you want to use in the RHS, so if there is oil_price and oil_price_ln, provide just oil_price, it will identify that oil_price_ln is a transformation using "like" operator}
 
 \item{train_df}{Train df - this is used to get the list of all macrovariables that have a likeness to each variable in baseVariables}
+
+\item{numberOfVariables}{Number of variables to be used in each formula. See strictMax for 'upto' vs 'exact' match}
+
+\item{strictMax}{Default as TRUE, if false, it looks for upto numberoFvariables, if TRUE, it looks at exact number of variables in the combinations it generates}
+
+\item{patternType}{default as "startsWith". If any other, then it uses %like%}
 }
 \value{
 Returns a list of all formulae that do not have related variables in the same formula
