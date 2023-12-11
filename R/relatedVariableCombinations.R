@@ -24,7 +24,7 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
   allFormulae<-c()
   
   
-  numberOfVariables<-3
+
   indexStart<-1
   if(strictMax==TRUE){
     indexStart<-numberOfVariables

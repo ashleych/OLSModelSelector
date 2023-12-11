@@ -13,7 +13,7 @@ test_that("Model Selection on the basis of significance ", {
   # first identify the baseVariables
   # After looking at the macrovariables one can see that these are the base variables, and all other variables are combinarions of these
   baseVars<-c("avg_oil_pri_barrel","Non_oil_ECI","ECI_yoy_ch")
-  allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
+  allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df,3 )
   
   expect_equal(length(allFormulae), 14)
 
