@@ -16,7 +16,7 @@ test_that("Model Selection on the basis of significance ", {
   allFormulae<-ST.auto.1::getUnRelatedVariableCombinations("DR",baseVars,train_df )
   
   expect_equal(length(allFormulae), 14)
-  browser()
+
   formualeFiltered<- getFormulaofAllSignificantModels(allFormulae,train_df )
   expect_equal(length(formualeFiltered),2)
 

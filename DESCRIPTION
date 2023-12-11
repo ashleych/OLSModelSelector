@@ -1,6 +1,6 @@
 Package: ST.auto.1
 Title: Automates OLS Regression 
-Version: 2.0.1
+Version: 3.0.0
 Authors@R: person("Ashley", "Cherian", email = "ashley.cherian@gmail.com", role = c("aut", "cre"))
 Description: Automates the OLS Regression. The code generates all combinations 
     of linear regression models. It runs diagnostic tests like tests for
