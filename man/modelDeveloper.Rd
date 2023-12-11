@@ -9,7 +9,7 @@ modelDeveloper(
   RHS_vars,
   multiple = TRUE,
   no_of_vars,
-  modelsNamesList = NA,
+  modelsNamesList = c(),
   trainData = train_df
 )
 }

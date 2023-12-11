@@ -11,7 +11,7 @@
 #' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator
 #' @export
 
-modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNamesList=NA, trainData=train_df){
+modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNamesList=c(), trainData=train_df){
   
   # if(silent==FALSE){
   #   cat("Following checks are being done : \n")
@@ -68,7 +68,7 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNam
       cat("Date in macrodata should be in dmy format eg. 31/12/2018")
     }
   )
-  if(!is.na(modelsNamesList)){
+  if(length(modelsNamesList)>0){
     
     models <-lapply(modelsNamesList,
                                function(x)

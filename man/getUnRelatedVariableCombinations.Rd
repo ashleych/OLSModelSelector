@@ -4,7 +4,13 @@
 \alias{getUnRelatedVariableCombinations}
 \title{Get Unrelated variables combinations, to avoid using variable combinations in the RHS of the formula that are transformations of the same variable}
 \usage{
-getUnRelatedVariableCombinations(LHS_vars, baseVariables, train_df)
+getUnRelatedVariableCombinations(
+  LHS_vars,
+  baseVariables,
+  train_df,
+  numberOfVariables,
+  strictMax = TRUE
+)
 }
 \arguments{
 \item{LHS_vars}{Left hand side variable name, the response variable as a vector eg c("DR")}

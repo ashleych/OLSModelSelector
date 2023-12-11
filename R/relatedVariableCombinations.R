@@ -22,7 +22,7 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
   
   numberOfVariables<-3
   indexStart<-1
-  if(strictMax){
+  if(strictMax==TRUE){
     indexStart<-numberOfVariables
   }
 
@@ -30,7 +30,12 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
     combn(baseVariables,x,simplify = FALSE,FUN=c)
   })
   
+  allCombosOfBaseVars <- lapply(allCombosOfBaseVars, function(lst) unlist(lst))
+  
+  
   allCombosOfBaseVars<-combn(baseVariables,numberOfVariables,simplify = FALSE,FUN=c)
+  
+  
   getFormulaeForParticularBaseVarCombo <-function(LHS_vars,baseVariablesCombination,train_df){
     
     
