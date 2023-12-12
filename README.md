@@ -39,22 +39,17 @@ validationSampler(macrodata,1:29,30:33,1:48)
 
 ## Variable Selection
 
-it is assumed variable selection has happened outside of the package via say lasso regression or stepwise.  lets assume the list below shows the variables of interest. These are only the independent variables
+Package offers some ability to shortlist variables on the basis of univairat regression results as a form of single factor analysis. Selections can be done on the basis of Rsq or pvalue
 ```
-vars <-
-  c(
-    "ECI_yoy_ch_3QMA_lag_4",
-    "avg_oil_pri_barrel_3QMA",
-    "Rl_est_Dub_q_yoy_ch_lag_1",
-    "avg_oil_pri_barrel_3QMA_lag_2",
-    "Non_oil_ECI_yoy_ch_3QMA_lag_3",
-    "Non_oil_ECI_yoy_ch_6QMA",
-    "avg_oil_pri_barrel",
-    "avg_oil_pri_barrel_3QMA_lag_1",
-    "avg_oil_pri_barrel_6QMA_lag_1",
-    "avg_oil_pri_barrel_lag_2",
-    "avg_oil_pri_barrel_lag_3"
+
+selectedVars <-
+  variableSelector(
+    LHS_vars = c(responseVariable),
+    RHS_vars = vars,
+    trainData = train_df,
+    pValueThreshold = 0.1,RsquaredThreshold=0.2
   )
+#selected vars will contain variables that have a pvalue less than 0.1 and rsquared of greater than 0.2. You can make either of the threholds 0 to avoid a check for that criteria. 
 ```
 
 ## Models Development
@@ -65,7 +60,7 @@ Run model developer code. LHS_vars is the response variable. It generates all po
 allModels <-
   modelDeveloper(
     LHS_vars = "DR",
-    RHS_vars = vars,
+    RHS_vars = selectedVars,
     trainData = train_df,
     no_of_vars = 2
   )
