@@ -9,7 +9,7 @@ variableSelector(
   LHS_vars,
   RHS_vars,
   trainData = train_df,
-  R2Threshold = 0.1,
+  R2Threshold = 0,
   pValueThreshold = 0
 )
 }
