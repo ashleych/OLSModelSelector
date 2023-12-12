@@ -10,29 +10,69 @@
 #' @examples
 #' variableSelector(LHS_vars = c("DR_logit_FD"),RHS_vars = vars,trainData =train_df)
 
-
 variableSelector <- function(LHS_vars ,
-                            RHS_vars ,
-                            trainData = train_df,
-                            R2Threshold = 0.1) {
+                             RHS_vars ,
+                             trainData = train_df,
+                             R2Threshold = 0.1,
+                             pValueThreshold = 0) {
+  
+  
+  selectedVarsOnBasisofRSquared<-c()
+  selectedVarsOnBasisofPValue<-c()
   allUnivariateModels <-
     modelDeveloper(
       LHS_vars = LHS_vars,
-      RHS_vars = vars,
+      RHS_vars = RHS_vars,
       trainData = train_df,
       no_of_vars = 1
     )
+  
+  if (R2Threshold > 0) {
+    R2       <- sapply(allUnivariateModels, function(x)
+      summary(x)$r.squared)
+    names(R2) <- names(allUnivariateModels)
+    
+    selectedModelNamesOnBasisofRSquared <-
+      names(R2[(R2 > R2Threshold)])
+    selectedVarsOnBasisofRSquared <-
+      unique(trimws(sapply(strsplit(selectedModelNamesOnBasisofRSquared, "[~]"), function(x)
+        x[[2]])))
+  }
+  
+  
+  # Selected models on the basis of pvalues
+  if (pValueThreshold > 0) {
+    
+    modelSelectionsBasedOnPvalueBoolean <- sapply(allUnivariateModels,
+                                                  function(model) {
+                                                    return(names(model))
+                                                  })
+    modelSelectionsBasedOnPvalueBoolean <- sapply(allUnivariateModels,
+                                                  function(model) {
+                                                    return(is_significant(model,pValueThreshold =pValueThreshold))
+                                                  })
+    
+    selectedModelNamesOnBasisofPValue <-
+      names(allUnivariateModels)[modelSelectionsBasedOnPvalueBoolean]
+    selectedVarsOnBasisofPValue <-
+      unique(trimws(sapply(strsplit(selectedModelNamesOnBasisofPValue, "[~]"), function(x)
+        x[[2]])))
+  }
+  
+  
+  if ((length(selectedVarsOnBasisofRSquared) > 0) & (length(selectedVarsOnBasisofPValue) > 0)) {
+    print("Returning values that are selected on the basis of both pvalue and rsquared")
+    return(intersect(selectedVarsOnBasisofPValue, selectedVarsOnBasisofRSquared) )
+    
+  }
+  if (length(selectedVarsOnBasisofPValue) > 0){
+    print("Returning values that are selected on the basis of  pvalue ")
+    
+    return(selectedVarsOnBasisofPValue)
+    
+  }
+  print("Returning values that are selected on the basis of  rsquared ")
 
-  R2       <- sapply(allUnivariateModels, function(x)
-    summary(x)$r.squared)
-  names(R2)<- names(allUnivariateModels)
-
-  selectedModels <- names(R2[(R2 > R2Threshold)])
-  selectedVars <-
-    unique(trimws(sapply(strsplit(selectedModels, "[~]"), function(x)
-      x[[2]])))
-
-  selectedVars
-}
-
-
+  return(selectedVarsOnBasisofRSquared)
+  
+  }

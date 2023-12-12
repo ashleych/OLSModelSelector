@@ -77,7 +77,6 @@ test_that("Get all combination of formulae that dont have related variables when
   
   # test for non exact match of max number of variables
   allFormulaeWithNotStrictMax<-getUnRelatedVariableCombinations("DR",baseVars,train_df,no_of_vars,FALSE )
-  browser()
   countOfFormulaWithNVariables_notStrict<-checkVariableCountOfFormulae(allFormulae = allFormulaeWithNotStrictMax)
   expect_equal(countOfFormulaWithNVariables_notStrict[Count==3,N],20)
 })
