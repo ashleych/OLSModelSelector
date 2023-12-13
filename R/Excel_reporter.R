@@ -41,7 +41,7 @@ if ("scenarios" %in% names(input_args_list)) {
   }
   else
   {
-    file.name <- make.names(paste0(output_file, '.xlsx'))
+    file.name <- make.names(paste0(output_file, Sys.time(),'.xlsx'))
   }
 
   names(model_list) <- make.unique(strtrim(model_list, 28))
