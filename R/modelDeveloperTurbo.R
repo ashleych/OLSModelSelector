@@ -73,20 +73,21 @@ modelDeveloperTurbo <- function(LHS_var, RHS_vars,multiple=TRUE,no_of_vars,model
   RHS_all <- combn(RHS_vars,no_of_vars,simplify = FALSE)
  
   print(paste0("No of models created : ",length(RHS_all) ))
-  
+  print(paste0("Start of loop", format(Sys.time(), "%X")))
   pvals<-lapply(1:length(RHS_all), function(i){
-    rhs<- RHS_all[i]
+    rhs<- RHS_all[i][[1]]
+
     if ((i %% progressStep)==0) {
-      print(paste0("No of models checked : " ,i))
-      
+      print(paste0("No of models checked : " ,as.integer(i/length(RHS_all)*100),"%" ,"---- Generated at ", format(Sys.time(), "%X")))
+
     }
     cols<-unlist(c(rhs,LHS_var))
     
     data=trainData[,..cols]
     data<-na.omit(data) #this is being done to avoid tbe warning: solve(): system is singular; attempting approx solution error which can happen becaise of teh presence of NAs
     # If we cbind a column of 1's then it will force the function to generate models with intercept,currently the implementation is without intercept
-    
-    pval<- tryCatch(
+
+    pvalue<- tryCatch(
       {
         # Just to highlight: if you want to use more than one
         # R expression in the "try" part then you'll have to
@@ -94,9 +95,10 @@ modelDeveloperTurbo <- function(LHS_var, RHS_vars,multiple=TRUE,no_of_vars,model
         # 'tryCatch()' will return the last evaluated expression
         # in case the "try" part was completed successfully
         # 
-        
+        # 
+
         mdl <- RcppArmadillo::fastLmPure(as.matrix(data[,..rhs]), as.matrix(data[,..LHS_var]))
-        pval <- 2*pt(abs(mdl$coefficients/mdl$stderr), mdl$df.residual, lower.tail=FALSE)
+        pvalue <- 2*pt(abs(mdl$coefficients/mdl$stderr), mdl$df.residual, lower.tail=FALSE)
         # The return value of `readLines()` is the actual value
         # that will be returned in case there is no condition
         # (e.g. warning or error).
@@ -106,7 +108,7 @@ modelDeveloperTurbo <- function(LHS_var, RHS_vars,multiple=TRUE,no_of_vars,model
         # message("Here's the original error message:")
         # message(conditionMessage(cond))
         # Choose a return value in case of error
-        NA
+        NULL
       },
       warning = function(cond) {
         # message(paste("URL caused a warning:", rhs))
@@ -117,22 +119,38 @@ modelDeveloperTurbo <- function(LHS_var, RHS_vars,multiple=TRUE,no_of_vars,model
       }
     )
     
-    if (inherits(pval, "try-error")) {
-      # Handle error case
-      # You can add your specific actions for when there's an error
-      pval<-c(9999999)
-    } else if (is.null(pval)) {
-      pval<-c(9999999)
-      # Handle warning case
-      # You can add your specific actions for when there's a warning
-    } else {
-      # Your successful result handling code here
+    # if (inherits(pvalue, "try-error")) {
+    #   # Handle error case
+    #   # You can add your specific actions for when there's an error
+    #   pvalue<-c(9999999)
+    # } else if (is.null(pvalue)) {
+    #   pvalue<-c(9999999)
+    #   # Handle warning case
+    #   # You can add your specific actions for when there's a warning
+    # } else {
+    #   # Your successful result handling code here
+    # 
+
+    if(!is.null(pvalue)){
+      return(max(pvalue))
     }
-    return(max(pval))
+    return(NULL)
+   
     
   })
+  print(paste0("End of loop", format(Sys.time(), "%X")))
+  
 
-  selectedRHS<-RHS_all[pvals<pvalueThreshold]
+
+
+print(paste0("sum of nulls in pvals is: ", sum(is.null(pvals))))
+
+# Assuming index_of_true contains the indices where the condition is TRUE
+index_of_true <- which(pvals < pvalueThreshold)
+
+# Select elements from RHS_All using the index_of_true
+selectedRHS <- RHS_all[index_of_true]
+  # selectedRHS<-RHS_all[pvals<pvalueThreshold]
 
   lhs<-paste0(LHS_var," ~ ")
   selectedRhs <-lapply(selectedRHS,function(x) paste0(x,collapse = " + "))
