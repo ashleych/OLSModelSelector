@@ -335,7 +335,8 @@ reporter <-
         stop(paste0("The customTransformFunction does not exist or is not a function.",unTransformFunction))  
       }
       transformedValues<- unTransformFunction(valuesToBeTransformed=report_predicted_df$predicted_values,...)
-
+      # browser()
+      report_predicted_df$back_transformed_predictions<- transformedValues
       
     }
     

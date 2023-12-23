@@ -33,7 +33,7 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
     combn(baseVariables,x,simplify = FALSE)
   })
  
-  
+
   # allCombosOfBaseVars <- lapply(allCombosOfBaseVars, function(lst) unlist(lst))
   allCombosOfBaseVars<- unlist(allCombosOfBaseVars, recursive = FALSE)
   
