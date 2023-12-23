@@ -1,3 +1,16 @@
+
+#' Generates all models using combination of dependent and independent variables provided
+#'
+#' @param LHS_vars LHS of the regression function of the for. 
+#' @param RHS_vars Right hand side of the regression. A vector of dependent variables,  macroeconomic variable names for instance. These should be available in the data provided to  validationSampler.
+#' @param no_of_vars Maximum Number of dependent variables to be used in the model building.
+#' @param trainData Training dataframe on which model is to be built
+#' @param modelsNamesList List of Models to be built, if this is not NA, then the previous arguments are ignored
+#' @param pvalueThreshold the Pvalue threshold to be used for instance 0.05
+#' @param progressStep THe number of models creation completion, after which a progress statement is logged to the console. If 1000, afetr every 1000 models, the user is given a message
+#' @return All model formulae that pass significance in the form Y ~ X1 + X2
+#' @export
+
 modelDeveloperTurbo <- function(LHS_var, RHS_vars,multiple=TRUE,no_of_vars,modelsNamesList=c(), trainData=train_df,pvalueThreshold=0.05, progressStep=10000){
   # To NOTE THAT THIS CREATES MODELS WITHOUT INTERCEPT, TO FORCE THSI TO CREATE MODEL WITH AN INTERCEPT ONE NEEDS TO ADD A COLUMN of 1s to the data and add that to the matrix
   # if(silent==FALSE){
