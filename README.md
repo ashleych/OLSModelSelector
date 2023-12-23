@@ -101,8 +101,20 @@ formualeFiltered<- getFormulaofAllSignificantModels(allFormulae,train_df ,pValue
 allModels<-modelDeveloper(modelsNamesList = formualeFiltered)
 
 ```
+One can also do this in TURBO mode. DO note that the models generated are zero intercept models - 
+
+TOD: Being able to generate models with intercept in TURBO mode, (essentially the X matrix needs to be given a series of 1)
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+  
+modelsCovariates<-modelDeveloperTurbo("Z_Index",vars[1:40],multiple = FALSE,3,pvalueThreshold = 0.05)
+
+# this gives a list of models that are significant at pvalueThreshold level. Uses C++, and is very fast.Can generate results for about 1 crore models (takes almost an hour)
+
+# 3 here denotes the number of variable combinations - it uses only a strictMax criteria for now, so if you pass 3 it will create models with 3 dependent variables, not with 2 or 1. Also for now, only one LHS variable can be passed
 
 
+```
 
 ## Models Diagnistics
 
