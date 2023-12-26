@@ -107,7 +107,7 @@ TOD: Being able to generate models with intercept in TURBO mode, (essentially th
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
   
-modelsCovariates<-modelDeveloperTurbo("Z_Index",vars[1:40],multiple = FALSE,3,pvalueThreshold = 0.05)
+modelStrings<-modelDeveloperTurbo("Z_Index",vars[1:40],multiple = FALSE,3,pvalueThreshold = 0.05)
 
 # this gives a list of models that are significant at pvalueThreshold level. Uses C++, and is very fast.Can generate results for about 1 crore models (takes almost an hour)
 
@@ -328,3 +328,9 @@ used when zscore untransforms have to be done. Like most untransforms, required 
     rho = rho
   )
 ```
+### TODO
+
+Use t-test to identify the significant independentvariables, see  https://rpubs.com/MdAhsanul/t-test.
+(pvalues can be determinsed without running a univariate regressions)
+
+
