@@ -70,7 +70,7 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNam
   )
   if(length(modelsNamesList)>0){
     
-    models <-lapply(modelsNamesList,
+    models <-mclapply(modelsNamesList,
                                function(x)
                                  lm(as.formula(x), data = train_df))
     
@@ -88,7 +88,7 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNam
   
   allFormulae<-unlist(lapply(LHS_all, function(x) {paste0(x,RHS_all)}))
   
-  allModelObjects <- lapply(allFormulae,
+  allModelObjects <- mclapply(allFormulae,
                             function(x) lm(as.formula(x), data = trainData)
   )
   names(allModelObjects)<- allFormulae

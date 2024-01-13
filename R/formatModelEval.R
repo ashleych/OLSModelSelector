@@ -8,8 +8,11 @@
 
 formatModelEvalResults <- function(allModelEvaluated) {
   evaluatedModels <- copy(allModelEvaluated)
-  
-  
+  setDT(evaluatedModels)
+  if (!'Intercept' %in% names(evaluatedModels)){
+    evaluatedModels[,Intercept:=0]
+    
+  }
   orderColumns <- function(DT) {
     firstSet <- c('model', 'Intercept')
     secondSetPattern <- "^Var" 
