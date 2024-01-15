@@ -47,7 +47,7 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
         if (!is.null(pvalue)) {
           return(max(pvalue[-1])) #Remove hte one pertaining to the intercept
         }
-        return(99999)
+        return(NULL)
       }, mc.preschedule = TRUE, mc.cores = ncores)
       
       index_of_true <- which(maxPvalues < pValueThreshold)
