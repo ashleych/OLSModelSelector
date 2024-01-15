@@ -23,5 +23,5 @@ Returns a list of all formulae of models that are significant, the models themse
 getFormulaofAllSignificantModelsTurbo
 }
 \examples{
-getFormulaofAllSignificantModels(-c("z_index ~ cp_general_government_debt_to_gdp_ratio_fd",,train_df)
+getFormulaofAllSignificantModels(-c("z_index ~ cp_general_government_debt_to_gdp_ratio_fd",train_df)
 }

@@ -30,9 +30,10 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
   if(strictMax==TRUE){
     indexStart<-numberOfVariables
   }
-  allCombosOfBaseVars<- mclapply(indexStart:numberOfVariables, function(x) {
+  print("creating base var combos")
+  allCombosOfBaseVars<- pbmclapply(indexStart:numberOfVariables, function(x) {
     combn(baseVariables,x,simplify = FALSE)
-  },mc.cores = getOption("mc.cores", ncores))
+  },mc.cores = getOption("mc.cores", ncores),mc.preschedule = TRUE)
  
 
   # allCombosOfBaseVars <- lapply(allCombosOfBaseVars, function(lst) unlist(lst))
@@ -66,7 +67,7 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
     allFormulae <-
       unlist(mclapply(LHS_all, function(x) {
         paste0(x, RHS_all)
-      },mc.cores = getOption("mc.cores", ncores)))
+      },mc.cores = getOption("mc.cores", ncores),mc.preschedule = TRUE))
     
     return(allFormulae)
   }
@@ -76,8 +77,9 @@ getUnRelatedVariableCombinations <- function(LHS_vars,baseVariables,train_df,num
     getFormulaeForParticularBaseVarCombo(LHS_vars, baseVarCombo, train_df, patternType)
   }
   
+  print("creating combinations for each base var combo")
   # Use lapply to apply the function to each base variable combination
-  allFormulae <- unlist(mclapply(allCombosOfBaseVars, getFormulae,mc.cores = getOption("mc.cores", ncores)))
+  allFormulae <- unlist(pbmclapply(allCombosOfBaseVars, getFormulae,mc.cores = getOption("mc.cores", ncores),mc.preschedule = TRUE))
   
   
   # for (baseVarCombo in allCombosOfBaseVars) {

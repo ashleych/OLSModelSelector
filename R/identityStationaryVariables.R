@@ -1,28 +1,170 @@
-library(tseries)
-conduct_tests <- function(Data1) {
-  kpsslevel_result <- kpss.test(x = Data1, null = "Level")$p.value
-  kpsstrend_result <-  kpss.test(x = Data1, null = "Trend")$p.value
-  adf_result <- adf.test(Data1)$p.value
-  return(list(KPSS_Test_Level = round(kpsslevel_result, 4),
-              KPSS_Test_Trend = round(kpsstrend_result, 4),
-              ADF_Test = round(adf_result, 4)))
-}
-newTests<- function(){
-# Apply the function to each column in Data1
-test_results <- lapply(train_df, function(column) {
-  if (is.numeric(column)) {
-    nonNAsSeries<- column[!is.na(column)]
-    conduct_tests(nonNAsSeries)
-  } else {
-    NULL  # If the column is not numeric, return NULL
-  }
-})
-
-# Remove NULL elements from the list
-test_results <- test_results[sapply(test_results, function(x) !is.null(x))]
-test_results <- do.call(rbind, test_results)
-
-
-
-test_results
-}
+# library(tseries)
+# conduct_tests <- function(Data1) {
+#   kpsslevel_result <- kpss.test(x = Data1, null = "Level")$p.value
+#   kpsstrend_result <-  kpss.test(x = Data1, null = "Trend")$p.value
+#   adf_result <- adf.test(Data1)$p.value
+#   return(list(KPSS_Test_Level = round(kpsslevel_result, 4),
+#               KPSS_Test_Trend = round(kpsstrend_result, 4),
+#               ADF_Test = round(adf_result, 4)))
+# }
+# 
+# # Apply the function to each column in Data1
+# test_results <- lapply(train_df, function(column) {
+#   if (is.numeric(column)) {
+#     nonNAsSeries<- column[!is.na(column)]
+#     conduct_tests(nonNAsSeries)
+#   } else {
+#     NULL  # If the column is not numeric, return NULL
+#   }
+# })
+# 
+# # Remove NULL elements from the list
+# test_results <- test_results[sapply(test_results, function(x) !is.null(x))]
+# test_results <- do.call(rbind, test_results)
+# 
+# # Printing the results
+# print(test_results)
+# write_clip(test_results)
+# 
+# test_results
+# 
+# 
+# 
+# stationaryVars<-c("cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd_lag1",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd_lag1",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd_lag1",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_change_lag1",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag1",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_change_lag1",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag1",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag1",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag1",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_growth_lag1",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_growth_lag1",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag1",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag1",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd_lag2",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd_lag2",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd_lag2",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_fd_lag2",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_fd_lag2",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_change_lag2",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag2",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_change_lag2",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag2",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag2",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_growth_lag2",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag2",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_growth_lag2",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag2",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag2",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd_lag3",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd_lag3",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd_lag3",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_fd_lag3",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_fd_lag3",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_fd_lag3",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_change_lag3",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag3",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag3",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag3",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag3",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_growth_lag3",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag3",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_growth_lag3",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag3",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag3",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd_lag4",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd_lag4",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd_lag4",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_fd_lag4",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_fd_lag4",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_fd_lag4",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag4",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag4",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag4",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag4",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_yoy_change_lag4",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_growth_lag4",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag4",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag4",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag4",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_lag5",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_fd_lag5",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_fd_lag5",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_fd_lag5",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_fd_lag5",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_fd_lag5",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_fd_lag5",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_ln_lag5",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag5",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag5",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag5",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_yoy_change_lag5",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag5",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag5",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag5",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_yoy_growth_lag5",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag6",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag6",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag6",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag6",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag6",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag6",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag6",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_change_lag7",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_change_lag7",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_change_lag7",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change_lag7",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_yoy_change_lag7",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_yoy_growth_lag7",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_growth_lag7",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_yoy_growth_lag7",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth_lag7",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_qoq",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag1",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag1",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag1",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_qoq_lag1",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag2",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag2",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag2",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag2",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_qoq_lag2",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag3",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag3",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag3",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag3",
+#   "cp_balance_of_payments_annualized_current_account_balance_to_gdp_ratio_percent_nsa_qoq_lag3",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag4",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag4",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag4",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag4",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag5",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag5",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag5",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag5",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_qoq_lag5",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag6",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag6",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag6",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag6",
+#   "cp_futures_price_nymex_light_sweet_crude_oil_contract_1_usd_per_bbl_nsa_qoq_lag6",
+#   "cp_gross_domestic_product_non_oil_sector_bil_2010_sar_saar_qoq_lag7",
+#   "cp_national_accounts_government_consumption_expenditure_bil_sar_saar_qoq_lag7",
+#   "cp_national_accounts_gross_capital_formation_bil_usd_saar_qoq_lag7",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_qoq_lag7",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_change",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_change",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_change",
+#   "cp_national_accounts_real_gross_domestic_product_gdp_bil_2010_sar_saar_yoy_growth",
+#   "cp_gross_domestic_product_oil_sector_bil_2010_sar_saar_yoy_growth",
+#   "cp_share_price_index_tadawul_all_share_index_index_1985_100_nsa_yoy_growth",
+#   "z_index_fd")
+# 
