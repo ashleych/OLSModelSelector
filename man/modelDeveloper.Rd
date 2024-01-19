@@ -10,7 +10,8 @@ modelDeveloper(
   multiple = TRUE,
   no_of_vars,
   modelsNamesList = c(),
-  trainData = train_df
+  trainData = train_df,
+  ncores = 4
 )
 }
 \arguments{

@@ -11,6 +11,7 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM(
   yIndex,
   train_df,
   pValueThreshold = 0.1,
+  alwaysInclude = 0,
   ncores = 4,
   saveToDisk = TRUE
 )
@@ -21,6 +22,8 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM(
 \item{yIndex}{Index of the response variable column in train_df}
 
 \item{train_df}{Train df - this is used to get the list of all macrovariables that have a likeness to each variable in baseVariables}
+
+\item{alwaysInclude}{To the combos created by this function, include this alwaysInclude in the lm formula, so if the numberOfVariables =4, then the system will generate all 3 variable coombinations and then add the alwaysInclude to each combo}
 
 \item{baseVariables}{Names of the untransformed variables that you want to use in the RHS, so if there is oil_price and oil_price_ln, provide just oil_price, it will identify that oil_price_ln is a transformation using "like" operator}
 }

@@ -11,8 +11,7 @@
 #' @return All model objects.Note that this is not a dataframe but S3 objects. If you want to explore particular models, then one can use the subset operator
 #' @export
 
-modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNamesList=c(), trainData=train_df){
-  
+modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNamesList=c(), trainData=train_df,ncores=4){
   # if(silent==FALSE){
   #   cat("Following checks are being done : \n")
   #   cat(
@@ -72,7 +71,7 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNam
     
     models <-mclapply(modelsNamesList,
                                function(x)
-                                 lm(as.formula(x), data = train_df))
+                                 lm(as.formula(x), data = train_df), mc.cores = ncores,mc.preschedule=TRUE)
     
     names(models)<- modelsNamesList
     return(models)
@@ -89,7 +88,7 @@ modelDeveloper <- function(LHS_vars, RHS_vars,multiple=TRUE,no_of_vars,modelsNam
   allFormulae<-unlist(lapply(LHS_all, function(x) {paste0(x,RHS_all)}))
   
   allModelObjects <- mclapply(allFormulae,
-                            function(x) lm(as.formula(x), data = trainData)
+                            function(x) lm(as.formula(x), data = trainData), mc.cores = ncores,mc.preschedule=TRUE
   )
   names(allModelObjects)<- allFormulae
   

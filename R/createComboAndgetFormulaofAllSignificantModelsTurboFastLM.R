@@ -4,6 +4,7 @@
 #' @param numberOfVariables Number of variables to be used in each formula. See strictMax for 'upto' vs 'exact' match
 #' @param yIndex Index of the response variable column in train_df
 #' @param train_df Train df - this is used to get the list of all macrovariables that have a likeness to each variable in baseVariables
+#' @param alwaysInclude To the combos created by this function, include this alwaysInclude in the lm formula, so if the numberOfVariables =4, then the system will generate all 3 variable coombinations and then add the alwaysInclude to each combo
 #' @return Returns a list of all formulae of models that are significant, the models themselves arent passed as this can be a very long list depending on the number of variables
 #' @export
 #' @examples
@@ -14,8 +15,27 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
            numberOfVariables,
            yIndex,
            train_df,
-           pValueThreshold = 0.1,
+           pValueThreshold = 0.1,alwaysInclude=0,
            ncores = 4,saveToDisk=TRUE) {
+    if(alwaysInclude>0){
+      
+      
+    
+    variableToAlwaysInclude <- names(train_df)[alwaysInclude]
+    
+    
+    baseVarsToRemoveFromComboCreation<- baseVars[unlist(lapply(baseVars,function(b) grepl(b,variableToAlwaysInclude)))]
+    } else {
+      
+      baseVarsToRemoveFromComboCreation<-c()
+    }
+    if(length(baseVarsToRemoveFromComboCreation)>0){
+      
+      baseVarsRevised<-baseVars[!baseVars %in% baseVarsToRemoveFromComboCreation ]
+    } else {
+      
+      baseVarsRevised<-baseVars
+    }
     
     checkSignificance <- function(combinationsMatrix) {
       noOfCombos <- dim(combinationsMatrix)[[1]]
@@ -64,12 +84,18 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
       #
       return(selectedRHSCombos)
     }
+    if(alwaysInclude>0){
+      numberOfVariablesWithWhichToGenerateCombinations <- numberOfVariables - length(alwaysInclude)
+    } else {
+      
+      numberOfVariablesWithWhichToGenerateCombinations <- numberOfVariables
+    }
     
-    indexStart <- numberOfVariables
+    indexStart <- numberOfVariablesWithWhichToGenerateCombinations
     
     allCombosOfBaseVars <-
-      pbmclapply(indexStart:numberOfVariables, function(x) {
-        combn(baseVars, x, simplify = FALSE)
+      pbmclapply(indexStart:numberOfVariablesWithWhichToGenerateCombinations, function(x) {
+        combn(baseVarsRevised, x, simplify = FALSE)
       }, mc.cores = ncores, mc.preschedule = TRUE)
     allCombosOfBaseVars <- allCombosOfBaseVars[[1]]
     
@@ -80,7 +106,7 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
     
     # Get all related variables against named lists
     relatedVarsList <- list()
-    for (b in baseVars) {
+    for (b in baseVarsRevised) {
       relatedVarsList[[b]] <-
         grep(paste0("^", b), names(train_df), value = FALSE)
     }
@@ -91,6 +117,11 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
         
         combination <-
           unname(as.matrix(expand.grid(relatedVarsListForThatCombo)))
+        
+        if(alwaysInclude>0){
+          
+          combination<-unname(cbind(alwaysInclude,combination))
+        }
         selectedRHSCombos <-
           checkSignificance(combinationsMatrix = combination)
         if(saveToDisk){
@@ -104,7 +135,7 @@ createComboAndgetFormulaofAllSignificantModelsTurboFastLM <-
         }
    
         
-      }, mc.cores = 1)
+      }, mc.cores = ncores,mc.preschedule=TRUE)
     
     return(combinations_df_list)
   }
